@@ -1,0 +1,60 @@
+// this method is to be use for clickable file
+//open the files in new blank page regardless of file type (doc,docx,pdf)
+//only work if the system is deployed in hosting platform like hostinger
+
+<?php
+                                                                        $fileName = htmlspecialchars($row['fileName']);
+                                                                        $filePath = "../../../Database/uploads/" . $fileName;
+
+                                                                        // Construct the full URL (update according to your server structure)
+                                                                        $fullFileUrl = "http://localhost/sedp-hrms/Human-Resource-Management-System/Admin%20Page/Database/uploads/" . urlencode($fileName);                                  
+                                                                        ?>
+
+                                                                        <a href="https://docs.google.com/gview?url=<?= $fullFileUrl ?>&embedded=true" target="_blank"> <!-- Google Docs Viewer for DOC/DOCX -->
+                                                                        <div class="row mt-3">
+                                                                            <div class="col-2">
+                                                                                <!-- File Picture -->
+                                                                                <img src="file-icon.png" alt="File Icon" class="img-fluid">
+                                                                            </div>
+                                                                            <div class="col-10">
+                                                                                <!-- File Name -->
+                                                                                <p>File: <?= $fileName ?></p>
+                                                                            </div>
+                                                                        </div>
+                                                                        </a>
+
+
+
+
+
+
+//in jobpost cards in the first column at jobapplicantpage/index.php
+//when displaying the benefits of a jobpost, there are two options
+
+//first option is by displaying it in badge
+
+<p class='card-text mb-1' style="font-size: 16px;">
+    <?php 
+    // Split the benefits string into an array
+    $benefitsArray = explode(', ', $row['benefits']);
+    
+    // Loop through each benefit and create a badge
+    foreach ($benefitsArray as $benefit): 
+    ?>
+        <span class="badge bg-primary me-1"><?= htmlspecialchars($benefit) ?></span>
+    <?php endforeach; ?>
+</p>
+
+//first option is by displaying it in bullet point
+<ul class='card-text mb-1' style="font-size: 16px;">
+    <?php 
+    // Split the benefits string into an array
+    $benefitsArray = explode(', ', $row['benefits']);
+    
+    // Loop through each benefit and create a list item
+    foreach ($benefitsArray as $benefit): 
+    ?>
+        <li><?= htmlspecialchars($benefit) ?></li>
+    <?php endforeach; ?>
+</ul>
+
