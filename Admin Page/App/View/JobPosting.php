@@ -80,7 +80,7 @@ include('../../../Database/db.php');
                             </div>
                             <!--Post Job btn-->
                             <div class="ms-auto me-3">
-                                <button type='button' class='btn btn-primary btn-md' data-bs-toggle="modal" data-bs-target="#CreateJobPost">
+                                <button type='button' class='btn btn-md text-white fw-5' data-bs-toggle="modal" data-bs-target="#CreateJobPost" style="background: #003c3c;">
                                     New Job Post
                                 </button>
                             </div>
@@ -128,7 +128,7 @@ include('../../../Database/db.php');
                                                 <!-- View JobPost Modal -->
                                                 <div class="modal fade" id="viewModal<?= $row['jobPostId'] ?>" tabindex="-1" aria-labelledby="viewModalLabel<?= $row['jobPostId'] ?>" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
                                                     <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                        <div class="modal-content" style="font-size: 15px; font-family: Arial;">
+                                                        <div class="modal-content w-100" style="font-size: 15px; font-family: Arial;">
                                                             <!-- Modal Header -->
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title" id="viewModalLabel">Job Post Details</h5>
@@ -348,10 +348,10 @@ include('../../../Database/db.php');
         <!-- Create Job Post Modal with Multi-Step Form -->
         <div class="modal fade" id="CreateJobPost" tabindex="-1" aria-labelledby="createJobPostLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
+                <div class="modal-content w-75">
+                    <div class="modal-header text-white" style="background: #003c3c;">
                         <h5 class="modal-title" id="createJobPostLabel">New Job Post</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: invert(1);" aria-label="Close"></button>
                     </div>
 
                     <div class="createstep-indicator">
@@ -533,9 +533,9 @@ include('../../../Database/db.php');
 
                         <!-- Modal Footer with Next/Back/Submit buttons -->
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" id="prevCreateStepBtn" onclick="prevCreateStep()">Previous</button>
-                            <button type="button" class="btn btn-primary" id="nextCreateStepBtn" onclick="nextCreateStep()">Next</button>
-                            <button type="submit" class="btn btn-success" id="createSubmitJobPostBtn">Post</button>
+                            <button type="button" class="btn btn-outline-secondary fw-bold" id="prevCreateStepBtn" onclick="prevCreateStep()">Previous</button>
+                            <button type="button" class="btn text-white" style="background: #003c3c;" id="nextCreateStepBtn" onclick="nextCreateStep()">Next</button>
+                            <button type="submit" class="btn text-white" style="background: #003c3c;" id="createSubmitJobPostBtn">Post</button>
                         </div>
                     </form>
                 </div>
@@ -572,7 +572,7 @@ include('../../../Database/db.php');
             }
 
             .createstep-dot.active {
-                background-color: #007bff;
+                background-color: #003c3c;
                 /* Active dot color */
             }
 

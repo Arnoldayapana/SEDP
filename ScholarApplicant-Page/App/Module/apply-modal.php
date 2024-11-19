@@ -1,6 +1,6 @@
 <style>
     .custom-modal {
-        max-width: 600px;
+        max-width: 650px;
         /* Set your desired width */
     }
 </style>
@@ -13,7 +13,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="applicationForm" action="../db/apply-modal.php" method="POST" enctype="multipart/form-data"> <!-- Added enctype for file upload -->
-                <div class="modal-body" style="max-height: 550px; overflow-y: auto;">
+                <div class="modal-body m-4" style="max-height: 550px; overflow-y: auto;">
                     <!-- Name Input -->
                     <div class="form-group mb-3">
                         <label for="name" class="form-label">Full Name</label>
@@ -38,7 +38,7 @@
                     <div class="form-group mb-3">
                         <label for="resume" class="form-label">Upload Resume</label>
                         <input type="file" class="form-control" name="resume" id="resume" accept=".pdf,.doc,.docx" required>
-                        <small class="text-muted">Accepted file formats: .pdf, .doc, .docx</small>
+                        <small class="text-muted">Accepted file formats: <span class="text-primary">.pdf</span> only!</small>
                     </div>
                     <!-- Message/Qualification Input -->
                     <div class="form-group mb-3">

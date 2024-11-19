@@ -9,7 +9,6 @@
                     <button type="button" class="btn text-white me-2 ms-3" data-bs-toggle="modal" data-bs-target="#exampleModal" style="background-color: #003c3c;">
                         Apply
                     </button>
-                    <a href="../View/forms.php" class="btn btn-primary text-white me-2 ms-3"> Apply</a>
                     <a href="#criteria" class="btn btn-outline-secondary btn-md">View more <i class="bi bi-chevron-right"></i></a>
                 </div>
             </div>

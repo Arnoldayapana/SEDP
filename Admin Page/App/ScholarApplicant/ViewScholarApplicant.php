@@ -1,7 +1,73 @@
 <?php
 session_start();
 require_once('../../../Database/db.php');
+require_once('../../../lib/TCPDF-main/tcpdf.php');
+require_once('../../../lib/FPDI-master/src/autoload.php');
+
+use setasign\Fpdi\TcpdfFpdi;
+
+$title = 'Scholar Information | SEDP HRMS';
+$page = 'Scholar applicant';
+
+// Get the scholar_id from the URL
+$scholar_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+
+// Fetch employee data
+$sql = "SELECT * FROM scholar_applicant WHERE scholar_id = ?";
+$stmt = $connection->prepare($sql);
+$stmt->bind_param("i", $scholar_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$scholar = $result->fetch_assoc();
+
+// Check if the scholar exists
+if (!$scholar) {
+    echo "<div class='alert alert-danger' role='alert'>Scholar not found.</div>";
+    exit;
+}
+
+// Define file path
+$filePath = '../../../uploads/resumes/' . $scholar['resume'];
+
+// Check if the file exists
+if (!file_exists($filePath)) {
+    echo "<div class='alert alert-danger' role='alert'>File not found.</div>";
+    exit;
+}
+
+// Function to view file
+function viewPDF($filePath)
+{
+    $pdf = new TcpdfFpdi();
+    $pdf->AddPage();
+
+    // Set source file and import page
+    $pageCount = $pdf->setSourceFile($filePath);
+    $tplIdx = $pdf->importPage(1);
+    $pdf->useTemplate($tplIdx, 0, 0, 210, 297); // Full page
+
+    $pdf->Output('view.pdf', 'I'); // I for inline display
+}
+
+// Function to download file
+function downloadPDF($filePath, $filename)
+{
+    header('Content-Type: application/pdf');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    readfile($filePath);
+    exit;
+}
+
+// Handle view or download request
+if (isset($_GET['action']) && $_GET['action'] == 'view') {
+    viewPDF($filePath);
+    exit;
+} elseif (isset($_GET['action']) && $_GET['action'] == 'download') {
+    downloadPDF($filePath, $scholar['resume']);
+    exit;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -84,37 +150,23 @@ require_once('../../../Database/db.php');
     </nav>
     <section>
         <div class="container mb-5 mt-4 bg-white p-3">
-            <nav aria-label="breadcrumb" class="my-0.5">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="../../../index.php">Home</a></li>
-                    <li class="breadcrumb-item"><a href="../">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Job Application</li>
-                </ol>
-            </nav>
             <div class="bg-white m-2 p-3">
                 <form action="../../Admin Page/App/Controller/JobApplicantController.php?action=apply" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="job_id" value="<?php echo htmlspecialchars($jobId); ?>"><!-- Hidden field for jobPostId -->
-                    <input type="hidden" name="jobPostId" value="<?php echo htmlspecialchars($jobId); ?>">
                     <div class="row g-0">
                         <div class="d-flex align-items-start" style="gap: 15px;">
                             <!-- First Column: Photo -->
                             <div style="flex: 0 0 auto;">
-                                <img src="../../Assets/Images/SEDPlogo.jpg" alt="Applicant Photo" class="img-fluid"
+                                <img src="../../../Assets/Images/SEDPlogo.jpg" alt="Applicant Photo" class="img-fluid"
                                     style="max-width: 100%; border-radius: 5px; border: 2px solid lightgrey; padding: 6px;">
                             </div>
 
                             <!-- Second Column: Job Information -->
                             <div style="flex: 1;">
-                                <p class="text-offset" style="font-size: 13px; margin-bottom: 1px;">Applying for</p>
-                                <h3 class="mb-1 fw-bold"><?php echo ($jobTitle); ?></h3>
-                                <a href="https://sedp.ph/" target="_blank" data-bs-toggle="tooltip" title="View SEDP" style="text-decoration: underline; color: inherit; font-size:16px; margin-bottom: 1px; display: inline-block;">
-                                    SEDP-Simbag Sa Pag-Asenso, Inc.
-                                </a>
-                                <br>
-                                <a href="#" style="text-decoration: underline; color: inherit; font-size:13px; margin-top: 1px;"
-                                    data-bs-toggle="offcanvas" data-bs-target="#viewDescription" aria-controls="offcanvasRight" title="View Job Description">
-                                    View job description
-                                </a>
+                                <div class="d-flex">
+                                    <p class="text-offset mb-1 mt-2" style="font-size: 16px;">Scholar</p>
+                                    <a href="../View/ScholarApplicant.php" class="btn btn-dark ms-auto">Back</a>
+                                </div>
+                                <h3 class="mb-1 fw-bold">Applicant Information</h3>
                             </div>
                         </div>
 
@@ -124,250 +176,74 @@ require_once('../../../Database/db.php');
 
                     <div class="row mb-4">
                         <!-- Column 1: Profile Photo -->
-                        <div class="col-md-2 ">
+                        <div class="col-md-2 mb-4">
                             <p class="mb-0" style="font-size: 16px;"><strong>Profile Photo</strong></p>
                             <div class="photo-container">
-                                <img id="profilePhotoPreview" src="../../Assets/Images/applicant.jpg" alt="Profile Photo" class="photo-preview">
+                                <img id="profilePhotoPreview" src="../../../Assets/Images/applicant.jpg" alt="Profile Photo" class="photo-preview">
                                 <input type="file" id="profilePhoto" name="photoFileName" class="photo-upload-input" accept=".jpg, .jpeg, .png" onchange="previewImage(event)">
-                                <label for="profilePhoto" class="upload-button">
-                                    <i class="bi bi-upload"></i> Upload
-                                </label>
                             </div>
-                            <p class="text-body-secondary ms-1" style="font-size: 12px;">Accepted file types: .jpg, .jpeg, .png (2MB limit).</p>
                         </div>
 
                         <!-- Column 2: Form Fields -->
                         <div class="col-md-8 mt-3 ms-5">
-                            <!-- Hidden Position Applied Field -->
-                            <input type="hidden" id="positionApplied" name="positionApplied" value="<?php echo ($jobTitle); ?>">
-
                             <!-- Name Input -->
                             <div class="row mb-3">
                                 <div class="col-sm-4">
-                                    <label for="lastName" class="col-form-label">Last Name</label>
-                                    <input name="lastName" type="text" class="form-control" placeholder="DelaCruz" required>
+                                    <label for="fullname" class="col-form-label">Full Name</label>
+                                    <input name="fullname" type="text" class="form-control" placeholder="<?php echo htmlspecialchars($scholar['name']); ?>" disabled>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label for="firstName" class="col-form-label">First Name</label>
-                                    <input name="firstName" type="text" class="form-control" placeholder="Juan" required>
+                                    <label for="School" class="col-form-label">School</label>
+                                    <input name="School" type="text" class="form-control" placeholder="<?php echo htmlspecialchars($scholar['school']); ?>" disabled>
                                 </div>
                                 <div class="col-sm-4">
-                                    <label for="middleName" class="col-form-label">Middle Name</label>
-                                    <input name="middleName" type="text" class="form-control" placeholder="A.">
+                                    <label for="Grade Level" class="col-form-label">Grade Level</label>
+                                    <input name="Grade Level" type="text" class="form-control" placeholder="<?php echo htmlspecialchars($scholar['GradeLevel']); ?>" disabled>
                                 </div>
                             </div>
                             <!-- Email Input -->
                             <div class="row mb-3">
                                 <div class="col-6">
                                     <label for="email" class="col-sm-6 col-form-label">Email Address:</label>
-                                    <input name="email" type="email" class="form-control" placeholder="juandelacruz@gmail.com" required>
+                                    <input name="email" type="email" class="form-control" placeholder="<?php echo htmlspecialchars($scholar['email']); ?>" disabled>
                                 </div>
                                 <!-- Contact Number Input -->
                                 <div class="col-6">
                                     <label for="contactNumber" class="col-sm-6 col-form-label">Contact Number: </label>
                                     <input type="text" id="contactNumber" name="contactNumber" class="form-control"
-                                        placeholder="096********"
-                                        pattern="^[0-9]{10,15}$"
-                                        title="Please enter a positive integer."
-                                        required oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                        placeholder="<?php echo htmlspecialchars($scholar['contact']); ?>" disabled>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Applicant form File Upload -->
-                        <p style="font-size: 16px; margin-bottom:0;"><strong>Application form </strong></p>
-                        <p style="color: grey; font-size:12px; width:75%;">Note: Please upload the completed application form provided by SEDP. If you haven't downloaded it yet, click this
-                            <a href="../Files/SEDP-Employee Form.docx"
-                                class=""
-                                data-bs-toggle="tooltip"
-                                title="Download the sedp job applicant form">link</a>.
-                        </p>
-                        <div class="row mb-3 ms-2">
-                            <div class="col-sm-6">
-                                <input type="file" id="file" name="formFileName" class="form-control" accept=".pdf,.doc,.docx" required onchange="checkFileSize(this)">
-                                <p style="color: grey; font-size:12px;">Accepted file types: .doc, .docx, .pdf (2MB limit).</p>
+                        <div class="d-flex">
+                            <!-- Applicant form File Upload -->
+                            <div class="col-4 mb-3">
+                                <p class="mb-3" style="font-size: 16px;"><strong>Application form </strong></p>
+                                <div class="col-sm-6">
+                                    <p>Uploaded File : <?php echo htmlspecialchars($scholar['resume']); ?></p>
+                                </div>
+                                <div class="view-file">
+                                    <a href="?id=<?php echo $scholar_id; ?>&action=view" class="btn btn-info btn-sm me-2">View File</a>
+                                    <a href="?id=<?php echo $scholar_id; ?>&action=download" class="btn btn-primary btn-sm">Download File</a>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Cover letter -->
-                        <p style="font-size: 16px;" class="mb-0"><strong>Cover Letter</strong></p>
-                        <div class="form-check mb-2 ms-3">
-                            <input class="form-check-input" type="radio" name="coverLetterOption" id="coverLetter1" value="upload" checked onclick="toggleCoverLetterOption()" aria-controls="fileUpload">
-                            <label class="form-check-label" for="coverLetter1">
-                                Upload Cover Letter
-                            </label>
-                            <div class="col-sm-6" id="fileUpload" style="display: none;">
-                                <input type="file" id="coverLetterFile" name="letter" class="form-control" accept=".pdf,.doc,.docx" onchange="checkFileSize(this)">
-                                <p style="color: grey; font-size:12px;">Accepted file types: .pdf, .doc, .docx (2MB limit).</p>
-                            </div>
-                        </div>
-                        <div class="form-check mb-2 ms-3">
-                            <input class="form-check-input" type="radio" name="coverLetterOption" id="coverLetter2" value="write" onclick="toggleCoverLetterOption()" aria-controls="textAreaCoverLetter">
-                            <label class="form-check-label" for="coverLetter2">
-                                Write Cover Letter
-                            </label>
-                            <div class="col-sm-8" id="textAreaCoverLetter" style="display: none;">
-                                <p style="color: grey; font-size:14px; width:75%;">Introduce yourself and briefly explain why you are suitable for this role. Consider your relevant skills, qualifications, and related experience.</p>
-                                <textarea name="coverLetterText" id="coverletter" placeholder="..." rows="4" style="color: grey; font-size:16px; width:75%;"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-check mb-5 ms-3 ">
-                            <input class="form-check-input" type="radio" name="coverLetterOption" id="coverLetter3" value="none" onclick="toggleCoverLetterOption()">
-                            <label class="form-check-label" for="coverLetter3">
-                                Don't include Cover Letter
-                            </label>
-                        </div>
 
 
-                        <div class="text-end mb-4">
-                            <button type="submit" name="submit" class="btn btn-primary">Submit Application</button>
+                            <!-- Cover letter -->
+                            <div class="col-6 ms-md-5 form-group mb-3">
+                                <p style="font-size: 16px;" class="mb-0"><strong>Cover Letter</strong></p>
+                                <label for="message" class="form-label">Additional Information</label>
+                                <textarea class="form-control" placeholder="<?php echo htmlspecialchars($scholar['message']); ?>" rows="4" disabled></textarea>
+                            </div>
                         </div>
                 </form>
             </div>
-            <!-- Off Canvas -->
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="viewDescription" aria-labelledby="viewDescriptionLabel" style="width: 650px;">
-                <div class="offcanvas-header">
-                    <h5 id="viewDescriptionLabel"><?php echo ($jobTitle); ?></h5>
-                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <div class="mb-4">
-                        <p>Job Title: <?php echo ($jobTitle); ?></p>
-                    </div>
-                    <div class="mb-4">
-                        <p class="mb-1">Benefits:</p>
-                        <ul class='card-text mb-1' style="font-size: 16px;">
-                            <?php
-                            // Split the benefits string into an array
-                            $jobBenefits = $getJobPostDetails['benefits'];
-                            $benefitsArray = explode(', ', ($jobBenefits));
-
-                            // Loop through each benefit and create a list item
-                            foreach ($benefitsArray as $benefit):
-                            ?>
-                                <li><?= htmlspecialchars($benefit) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </div>
-                    <div class="mb-4">
-                        <p class="mb-1">Description:</p>
-                        <div><?php echo htmlspecialchars_decode($jobPostDescription); ?></div>
-                    </div>
-                    <div class="mb-4">
-                        <p class="mb-1">Qualification:</p>
-                        <div><?php echo htmlspecialchars_decode($jobPostQualification); ?></div>
-                    </div>
-                    <div class="mb-4">
-                        <p class="mb-1">Key Responsibilities:</p>
-                        <div><?php echo htmlspecialchars_decode($jobPostKeyResponsibilities); ?></div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Modal -->
-            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Your application has been submitted successfully!</h1>
-                        </div>
-                        <div class="modal-body">
-                            <strong>PLEASE SAVE YOUR UNIQUE ID!!!</strong> <br>
-                            Your Unique ID is: <strong><?php echo $uniqueIdentifier; ?></strong>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick="saveAsText('<?php echo $uniqueIdentifier; ?>')">Save Text</button>
-                            <button type="button" class="btn btn-primary" onclick="window.location.href='JobApplicantStatus.php?uniqueId=<?php echo htmlspecialchars($uniqueIdentifier); ?>'">Okay</button>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-            <script>
-                // Check if PHP variable $showModal is true and then show the modal
-                <?php if ($showModal): ?>
-                    var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
-                    myModal.show();
-                <?php endif; ?>
-            </script>
-
         </div>
     </section>
-
-
-    <script>
-        // Function to save the UniqueIdentifier as a .txt file
-        function saveAsText(uniqueIdentifier) {
-            const blob = new Blob([uniqueIdentifier], {
-                type: 'text/plain'
-            });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'UniqueIdentifier.txt';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    </script>
-
-    <script>
-        function toggleCoverLetterOption() {
-            // Get the radio buttons and elements to toggle
-            const uploadRadio = document.getElementById("coverLetter1");
-            const writeRadio = document.getElementById("coverLetter2");
-            const noneRadio = document.getElementById("coverLetter3");
-
-            const fileUpload = document.getElementById("fileUpload");
-            const textAreaCoverLetter = document.getElementById("textAreaCoverLetter");
-
-            // Toggle visibility based on the selected radio button
-            if (uploadRadio.checked) {
-                fileUpload.style.display = "block";
-                textAreaCoverLetter.style.display = "none";
-            } else if (writeRadio.checked) {
-                fileUpload.style.display = "none";
-                textAreaCoverLetter.style.display = "block";
-            } else if (noneRadio.checked) {
-                fileUpload.style.display = "none";
-                textAreaCoverLetter.style.display = "none";
-            }
-        }
-
-        function checkFileSize(input) {
-            const maxSize = 2 * 1024 * 1024; // 2MB
-            if (input.files[0] && input.files[0].size > maxSize) {
-                alert("File size should not exceed 2MB.");
-                input.value = '';
-            }
-        }
-
-        // Initialize with the first radio button checked
-        window.onload = () => {
-            const firstRadio = document.getElementById("coverLetter1");
-            firstRadio.checked = true; // Ensure first radio is checked
-            toggleCoverLetterOption(); // Ensure correct fields are shown
-        };
-    </script>
-
-    <script>
-        // JavaScript function to display the selected image in the container
-        function previewImage(event) {
-            const preview = document.getElementById('profilePhotoPreview');
-            const file = event.target.files[0];
-
-            // Check file size
-            checkFileSize(event.target);
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-    </script>
     <script src="../../Assets/Js/tooltip.js" defer></script>
 
 

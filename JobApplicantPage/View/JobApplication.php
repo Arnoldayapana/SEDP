@@ -138,7 +138,7 @@ $uniqueIdentifier = $_GET['uniqueIdentifier'] ?? '';
         <div class="container mb-5 mt-4 bg-white p-3">
             <nav aria-label="breadcrumb" class="my-0.5">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="../../">Home</a></li>
+                    <li class="breadcrumb-item "><a href="../../">Home</a></li>
                     <li class="breadcrumb-item"><a href="../../JobApplicantPage/">Job Posts</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Job Application</li>
                 </ol>

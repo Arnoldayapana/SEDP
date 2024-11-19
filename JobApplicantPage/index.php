@@ -154,15 +154,15 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
             background-image: url("View/2.jpg");
             background-size: cover;
             background-position: center;
-            filter: brightness(60%);
-            backdrop-filter: blur(10px);
+            filter: brightness(100%);
+            backdrop-filter: blur(20px);
             color: #E0E0E0;
             /* Adjust percentage as needed */
         }
 
 
         #card {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.3);
             /* background: rgba(255, 255, 255, 0.2);*/
             border-radius: 10px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -189,11 +189,11 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
     <nav aria-label="breadcrumb" class="mb-1 d-flex justify-content-between mx-5 mt-3">
         <div class="container d-flex">
 
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
+            <ol class="breadcrumb display-flex">
+                <li class="breadcrumb-item"><a class="text-decoration-none text-white" style="background: #003c3c; border-radius: 5px; padding: 10px 20px;" href="../index.php">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Job Posts</li>
             </ol>
-            <a href="./View/JobApplicantStatus.php" class="text-decoration-none ms-auto">Application Status</a>
+            <a href="./View/JobApplicantStatus.php" class="text-decoration-none ms-auto text-white m-0" style="background: #003c3c; border-radius: 5px; padding: 10px 20px;">Application Status</a>
         </div>
     </nav>
     <hr class="mx-5 my-0">
@@ -329,7 +329,7 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
     </div>
 
     <!-- No results message -->
-    <div class="no-results" id="no-results-message">
+    <div class="container no-results" id="no-results-message">
         <div class="container">
             <img src="view/not found.png" alt="img" style="height: 300px; width:270px;">
             <h1>No Job Available</h1>
@@ -506,7 +506,7 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
                         const benefitsHtml = benefitsArray.map(benefit => `<li>${benefit.trim()}</li>`).join('');
 
                         const jobDetailsHtml = `
-            <div class="card mt-2 mx-2 text-light" style="flex: 1; padding:20px;" id="card">
+            <div class="card mt-2 mx-2 text-white" style="flex: 1; padding:20px;" id="card">
                 <h2 class="mb-2 fw-bold">${jobPost.jobTitle}</h2>
                 <div class="row text-start ms-1">
                     <div class="col-auto pe-1">

@@ -275,8 +275,8 @@ include('../../Core/Includes/header.php');
                                                 </div>
                                                 <!-- View Applicant Modal -->
                                                 <div class="modal fade" id="applicantViewModal<?= $row['applicantId'] ?>" tabindex="-1" aria-labelledby="applicantViewModalLabel<?= $row['applicantId'] ?>" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-xl">
-                                                        <div class="modal-content" style="font-size: 12px; font-family: Arial;">
+                                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                        <div class="modal-content w-100" style="font-size: 12px; font-family: Arial;">
                                                             <!-- Modal Header -->
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title" id="applicantViewModalLabel">Applicant Details</h5>
@@ -376,7 +376,7 @@ include('../../Core/Includes/header.php');
 
                                                             <!-- Modal Footer -->
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn text-white" data-bs-dismiss="modal" style="background: #003c3c;">Close</button>
                                                             </div>
                                                         </div>
                                                     </div>

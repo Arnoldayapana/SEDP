@@ -8,17 +8,17 @@ include('../../Core/Includes/header.php');
 // Get the recipient_id from the URL
 $recipient_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
-// Fetch employee data
+// Fetch scholar data
 $sql = "SELECT * FROM recipient WHERE recipient_id = ?";
 $stmt = $connection->prepare($sql);
 $stmt->bind_param("i", $recipient_id);
 $stmt->execute();
 $result = $stmt->get_result();
-$employee = $result->fetch_assoc();
+$scholar = $result->fetch_assoc();
 
-// Check if the employee exists
-if (!$employee) {
-    echo "<div class='alert alert-danger' role='alert'>Employee not found.</div>";
+// Check if the scholar exists
+if (!$scholar) {
+    echo "<div class='alert alert-danger' role='alert'>scholar not found.</div>";
     exit;
 }
 ?>
@@ -43,27 +43,27 @@ if (!$employee) {
                 <tbody>
                     <tr>
                         <td class="fw-bold">Full Name :</td>
-                        <td><?php echo htmlspecialchars($employee['name']); ?></td>
+                        <td><?php echo htmlspecialchars($scholar['name']); ?></td>
                     </tr>
                     <tr>
                         <td class="fw-bold">Email Address :</td>
-                        <td><?php echo htmlspecialchars($employee['email']); ?></td>
+                        <td><?php echo htmlspecialchars($scholar['email']); ?></td>
                     </tr>
                     <tr>
                         <td class="fw-bold">Contact :</td>
-                        <td><?php echo htmlspecialchars($employee['contact']); ?></td>
+                        <td><?php echo htmlspecialchars($scholar['contact']); ?></td>
                     </tr>
                     <tr>
                         <td class="fw-bold">Branch :</td>
-                        <td><?php echo htmlspecialchars($employee['branch']); ?></td>
+                        <td><?php echo htmlspecialchars($scholar['branch']); ?></td>
                     </tr>
                     <tr>
                         <td class="fw-bold">Account Password :</td>
-                        <td><?php echo htmlspecialchars($employee['password']); ?></td>
+                        <td><?php echo htmlspecialchars($scholar['password']); ?></td>
                     </tr>
                     <tr>
                         <td class="fw-bold">Hire Date :</td>
-                        <td><?php echo htmlspecialchars($employee['admission_date']); ?></td>
+                        <td><?php echo htmlspecialchars($scholar['admission_date']); ?></td>
                     </tr>
                     <tr>
                         <td class="fw-bold">Gender :</td>

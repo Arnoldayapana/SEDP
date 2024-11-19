@@ -11,24 +11,24 @@
                         <div class="modal-body">
 
                             <input type="hidden" name="recipient_id" value="<?php echo htmlspecialchars($recipient_id); ?>">
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label class="col-sm-6 col-form-label">Name</label>
                                 <input type="text" class="form-control" name="name" value="<?php echo $name; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label class="col-sm-6 col-form-label">Email</label>
                                 <input type="email" class="form-control" name="email" value="<?php echo $email; ?>">
                             </div>
 
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label class="col-sm-6 col-form-label">School</label>
                                 <input type=" text" class="form-control" name="school" value="<?php echo $school; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label class="col-sm-6 col-form-label">Contact Number</label>
                                 <input type=" number" class="form-control" name="contact" value="<?php echo $contact; ?>">
                             </div>
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-1">
                                 <label for="branch" class="col col-form-label">Branch</label>
                                 <select class="form-select" id="branch" name="branch" required>
                                     <option value="" disabled <?php echo empty($branch) ? 'selected' : ''; ?>>Select</option>
@@ -48,7 +48,7 @@
                                     ?>
                                 </select>
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label class="col col-form-label">GradeLevel</label>
                                 <select class="form-select" name="GradeLevel" required>
                                     <option value="">Select</option>
@@ -67,7 +67,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label>Password</label>
                                 <div class="input-group">
                                     <?php

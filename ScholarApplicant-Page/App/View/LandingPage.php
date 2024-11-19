@@ -40,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a class="navbar-brand text-white align-text-center fw-bolder fs-5" href="../../../index.php">
                 SEDP Simbag Sa Pag-Asenso Inc.
             </a>
+            <a href="SearchApplicationStatus.php" style="text-decoration: none; color:whitesmoke; font-size:15px;"><i class="bi bi-patch-exclamation-fill"></i> Application Status</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
