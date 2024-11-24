@@ -150,6 +150,31 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
         #qualification {
             background-image: url("View/QualificationBack.jpg");
             background-size: cover;
+            backdrop-filter: blur(10px);
+            filter: brightness(90%);
+
+
+        }
+
+        #jobCards {
+            background-image: url("View/2.jpg");
+            background-size: cover;
+            background-position: center;
+            filter: brightness(100%);
+            backdrop-filter: blur(20px);
+            color: #E0E0E0;
+            /* Adjust percentage as needed */
+        }
+
+
+        #card {
+            background: rgba(0, 0, 0, 0.3);
+            /* background: rgba(255, 255, 255, 0.2);*/
+            border-radius: 10px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(4.4px);
+            -webkit-backdrop-filter: blur(4.4px);
+            border: 1px solid rgba(255, 255, 255, 0.65);
         }
     </style>
 </head>
@@ -168,11 +193,22 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
     </nav>
     <!-- Navigation -->
     <nav aria-label="breadcrumb" class="mb-1 d-flex justify-content-between mx-5 mt-3">
-        <ol class="breadcrumb">
+        <<<<<<< HEAD
+            <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
             <li class="breadcrumb-item active" aria-current="page">Job Posts</li>
-        </ol>
-        <a href="./View/JobApplicantStatus.php" class="text-decoration-none">Application Status</a>
+            </ol>
+            <a href="./View/JobApplicantStatus.php" class="text-decoration-none">Application Status</a>
+            =======
+            <div class="container d-flex">
+
+                <ol class="breadcrumb display-flex">
+                    <li class="breadcrumb-item"><a class="text-decoration-none text-white" style="background: #003c3c; border-radius: 5px; padding: 10px 20px;" href="../index.php">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Job Posts</li>
+                </ol>
+                <a href="./View/JobApplicantStatus.php" class="text-decoration-none ms-auto text-white m-0" style="background: #003c3c; border-radius: 5px; padding: 10px 20px;">Application Status</a>
+            </div>
+            >>>>>>> 52b8f99cb43916555eb9630c1d088be569405ea0
     </nav>
     <hr class="mx-5 my-0">
     <!-- Image -->
@@ -307,180 +343,188 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
     </div>
 
     <!-- No results message -->
-    <div class="no-results" id="no-results-message">
+    <<<<<<< HEAD
+        <div class="no-results" id="no-results-message">
         No jobs found.
-    </div>
+        =======
+        <div class="container no-results" id="no-results-message">
+            <div class="container">
+                <img src="view/not found.png" alt="img" style="height: 300px; width:270px;">
+                <h1>No Job Available</h1>
+            </div>
+            >>>>>>> 52b8f99cb43916555eb9630c1d088be569405ea0
+        </div>
 
-    <div class="row">
-        <!-- First Column: Cards -->
-        <div class="col-md-5 mt-3 my-3" id="job-cards-container">
-            <div class="scrollable-cards">
-                <?php foreach ($jobPosts as $row): ?>
-                    <div class='card mb-3 shadow' onclick="showJobDetails(<?= $row['jobPostId'] ?>, this)">
-                        <div class='card-body'>
-                            <div style="flex: 1;">
-                                <div class="text-end">
-                                    <p class='card-text' style="font-size: 14px; margin-bottom: 0%; color:grey;"><span class="time-ago" data-time="<?= ($row['datePosted']) ?>"></span></p>
-                                </div>
-                                <h4 class="mb-1 ms-3 fw-bold"><?= ($row['jobTitle']) ?></h4>
-                                <div class="row text-start ms-1 mb-4">
-                                    <div class="col-auto pe-1" data-bs-toggle="tooltip" title="Number of slot(s) available">
-                                        <p style="font-size: 12px; margin-bottom: 0;"><i class='bi bi-people-fill'></i> <?= $row['applicantSize'] ?></p>
+        <div class="row">
+            <!-- First Column: Cards -->
+            <div class="col-md-5 mt-3 my-3" id="job-cards-container">
+                <div class="scrollable-cards">
+                    <?php foreach ($jobPosts as $row): ?>
+                        <div class='card mb-3 shadow' onclick="showJobDetails(<?= $row['jobPostId'] ?>, this)">
+                            <div class='card-body'>
+                                <div style="flex: 1;">
+                                    <div class="text-end">
+                                        <p class='card-text' style="font-size: 14px; margin-bottom: 0%; color:grey;"><span class="time-ago" data-time="<?= ($row['datePosted']) ?>"></span></p>
                                     </div>
-                                    <div class="col-auto pe-1" data-bs-toggle="tooltip" title="Type of Employment">
-                                        <p style=" font-size: 12px; margin-bottom: 0; "><i class='bi bi-clock'></i> <?= ($row['employmentType']) ?></p>
+                                    <h4 class="mb-1 ms-3 fw-bold"><?= ($row['jobTitle']) ?></h4>
+                                    <div class="row text-start ms-1 mb-4">
+                                        <div class="col-auto pe-1" data-bs-toggle="tooltip" title="Number of slot(s) available">
+                                            <p style="font-size: 12px; margin-bottom: 0;"><i class='bi bi-people-fill'></i> <?= $row['applicantSize'] ?></p>
+                                        </div>
+                                        <div class="col-auto pe-1" data-bs-toggle="tooltip" title="Type of Employment">
+                                            <p style=" font-size: 12px; margin-bottom: 0; "><i class='bi bi-clock'></i> <?= ($row['employmentType']) ?></p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class=" row ms-1">
-                                    <p class='card-text mb-1' style="font-size: 15px;"> PHP <?= ($row['minimumSalary']) ?> - <?= ($row['maximumSalary']) ?></p>
-                                    <p class='card-text mb-1' style="font-size: 15px;"></i> <?= ($row['country']) ?>, <?= ($row['region']) ?>, <?= ($row['province']) ?>, <?= ($row['city']) ?></p>
-                                    <p class='card-text mb-1' style="font-size: 15px;">
-                                        <?php
-                                        // Split the benefits string into an array
-                                        $benefitsArray = explode(', ', $row['benefits']);
+                                    <div class=" row ms-1">
+                                        <p class='card-text mb-1' style="font-size: 15px;"> PHP <?= ($row['minimumSalary']) ?> - <?= ($row['maximumSalary']) ?></p>
+                                        <p class='card-text mb-1' style="font-size: 15px;"></i> <?= ($row['country']) ?>, <?= ($row['region']) ?>, <?= ($row['province']) ?>, <?= ($row['city']) ?></p>
+                                        <p class='card-text mb-1' style="font-size: 15px;">
+                                            <?php
+                                            // Split the benefits string into an array
+                                            $benefitsArray = explode(', ', $row['benefits']);
 
-                                        // Loop through each benefit and create a badge
-                                        foreach ($benefitsArray as $benefit):
-                                        ?>
-                                            <span class="badge bg-success me-1"><?= htmlspecialchars($benefit) ?></span>
-                                        <?php endforeach; ?>
-                                    </p>
+                                            // Loop through each benefit and create a badge
+                                            foreach ($benefitsArray as $benefit):
+                                            ?>
+                                                <span class="badge bg-success me-1"><?= htmlspecialchars($benefit) ?></span>
+                                            <?php endforeach; ?>
+                                        </p>
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
 
+                </div>
             </div>
-        </div>
 
-        <!-- Second Column: Full Job Details -->
-        <div class="col-md-7 mt-0" style="display: none;" id="job-details-container"> <!-- Initially hidden -->
-            <div class="border rounded p-4 shadow">
-                <h3>Select a job to view details</h3> <!-- Default message -->
+            <!-- Second Column: Full Job Details -->
+            <div class="col-md-7 mt-0" style="display: none;" id="job-details-container"> <!-- Initially hidden -->
+                <div class="border rounded p-4 shadow">
+                    <h3>Select a job to view details</h3> <!-- Default message -->
+                </div>
             </div>
-        </div>
-        <script>
-            $(document).ready(function() {
-                function timeAgo(date) {
-                    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-                    const intervals = [{
-                            label: 'year',
-                            seconds: 31536000
-                        },
-                        {
-                            label: 'month',
-                            seconds: 2592000
-                        },
-                        {
-                            label: 'day',
-                            seconds: 86400
-                        },
-                        {
-                            label: 'hour',
-                            seconds: 3600
-                        },
-                        {
-                            label: 'minute',
-                            seconds: 60
-                        },
-                        {
-                            label: 'second',
-                            seconds: 1
-                        }
-                    ];
+            <script>
+                $(document).ready(function() {
+                    function timeAgo(date) {
+                        const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+                        const intervals = [{
+                                label: 'year',
+                                seconds: 31536000
+                            },
+                            {
+                                label: 'month',
+                                seconds: 2592000
+                            },
+                            {
+                                label: 'day',
+                                seconds: 86400
+                            },
+                            {
+                                label: 'hour',
+                                seconds: 3600
+                            },
+                            {
+                                label: 'minute',
+                                seconds: 60
+                            },
+                            {
+                                label: 'second',
+                                seconds: 1
+                            }
+                        ];
 
-                    for (const interval of intervals) {
-                        const count = Math.floor(seconds / interval.seconds);
-                        if (count > 0) {
-                            return `${count} ${interval.label}${count > 1 ? 's' : ''} ago`;
+                        for (const interval of intervals) {
+                            const count = Math.floor(seconds / interval.seconds);
+                            if (count > 0) {
+                                return `${count} ${interval.label}${count > 1 ? 's' : ''} ago`;
+                            }
                         }
+                        return 'just now';
                     }
-                    return 'just now';
-                }
 
-                $('.time-ago').each(function() {
-                    const datePosted = new Date($(this).data('time'));
-                    $(this).text(timeAgo(datePosted));
-                });
-
-                $('#filter-form').on('submit change', function(e) {
-                    e.preventDefault();
-                    $('#loading-spinner').show();
-                    $('#job-details-container').hide();
-                    $('#job-cards-container').html('');
-                    $('#no-results-message').hide();
-
-                    $.ajax({
-                        url: '',
-                        type: 'GET',
-                        data: $('#filter-form').serialize(),
-                        success: function(response) {
-                            var newjobPosts = $(response).find('#job-cards-container .scrollable-cards').html();
-                            var noJobsFound = newjobPosts.trim() === '';
-
-                            setTimeout(function() {
-                                $('#loading-spinner').hide();
-
-                                if (noJobsFound) {
-                                    $('#job-cards-container').html('');
-                                    $('#no-results-message').css('display', 'block');
-                                    $('#job-details-container').hide();
-                                } else {
-                                    $('#job-cards-container').html('<div class="scrollable-cards"></div>');
-                                    $('.scrollable-cards').html(newjobPosts).css({
-                                        'max-height': '80vh',
-                                        'overflow-y': 'auto'
-                                    });
-
-                                    $('#no-results-message').hide();
-                                    $('#job-details-container').hide();
-
-                                    $('.time-ago').each(function() {
-                                        const datePosted = new Date($(this).data('time'));
-                                        $(this).text(timeAgo(datePosted));
-                                    });
-                                }
-                            }, 1500);
-                        },
-                        error: function() {
-                            $('#loading-spinner').hide();
-                            console.log('Failed to fetch job posts');
-                        }
+                    $('.time-ago').each(function() {
+                        const datePosted = new Date($(this).data('time'));
+                        $(this).text(timeAgo(datePosted));
                     });
-                });
 
-                function decodeHtml(html) {
-                    const txt = document.createElement("textarea");
-                    txt.innerHTML = html;
-                    return txt.value;
-                }
+                    $('#filter-form').on('submit change', function(e) {
+                        e.preventDefault();
+                        $('#loading-spinner').show();
+                        $('#job-details-container').hide();
+                        $('#job-cards-container').html('');
+                        $('#no-results-message').hide();
 
-                window.showJobDetails = function(jobPostId, cardElement) {
-                    const cards = document.querySelectorAll('.scrollable-cards .card');
-                    cards.forEach(card => card.classList.remove('active'));
-                    cardElement.classList.add('active');
+                        $.ajax({
+                            url: '',
+                            type: 'GET',
+                            data: $('#filter-form').serialize(),
+                            success: function(response) {
+                                var newjobPosts = $(response).find('#job-cards-container .scrollable-cards').html();
+                                var noJobsFound = newjobPosts.trim() === '';
 
-                    const jobPost = <?= json_encode($jobPosts) ?>.find(post => post.jobPostId == jobPostId);
+                                setTimeout(function() {
+                                    $('#loading-spinner').hide();
 
-                    if (jobPost) {
-                        const postedTimeAgo = timeAgo(jobPost.datePosted);
+                                    if (noJobsFound) {
+                                        $('#job-cards-container').html('');
+                                        $('#no-results-message').css('display', 'block');
+                                        $('#job-details-container').hide();
+                                    } else {
+                                        $('#job-cards-container').html('<div class="scrollable-cards"></div>');
+                                        $('.scrollable-cards').html(newjobPosts).css({
+                                            'max-height': '80vh',
+                                            'overflow-y': 'auto'
+                                        });
 
-                        const jobDescription = decodeHtml(jobPost.jobDescription);
-                        const jobQualification = decodeHtml(jobPost.jobQualification);
-                        const jobKeyResponsibilities = decodeHtml(jobPost.jobKeyResponsibilities);
+                                        $('#no-results-message').hide();
+                                        $('#job-details-container').hide();
 
-                        const applicantSize = jobPost.applicantSize || 'N/A'; // Example default value
-                        const employmentType = jobPost.employmentType || 'N/A'; // Example default value
+                                        $('.time-ago').each(function() {
+                                            const datePosted = new Date($(this).data('time'));
+                                            $(this).text(timeAgo(datePosted));
+                                        });
+                                    }
+                                }, 1500);
+                            },
+                            error: function() {
+                                $('#loading-spinner').hide();
+                                console.log('Failed to fetch job posts');
+                            }
+                        });
+                    });
 
-                        // Split the benefits string into an array
-                        const benefitsArray = jobPost.benefits.split(', '); // Assuming benefits are stored as a comma-separated string
+                    function decodeHtml(html) {
+                        const txt = document.createElement("textarea");
+                        txt.innerHTML = html;
+                        return txt.value;
+                    }
 
-                        // Create HTML for benefits
-                        const benefitsHtml = benefitsArray.map(benefit => `<li>${benefit.trim()}</li>`).join('');
+                    window.showJobDetails = function(jobPostId, cardElement) {
+                        const cards = document.querySelectorAll('.scrollable-cards .card');
+                        cards.forEach(card => card.classList.remove('active'));
+                        cardElement.classList.add('active');
 
-                        const jobDetailsHtml = `
+                        const jobPost = <?= json_encode($jobPosts) ?>.find(post => post.jobPostId == jobPostId);
+
+                        if (jobPost) {
+                            const postedTimeAgo = timeAgo(jobPost.datePosted);
+
+                            const jobDescription = decodeHtml(jobPost.jobDescription);
+                            const jobQualification = decodeHtml(jobPost.jobQualification);
+                            const jobKeyResponsibilities = decodeHtml(jobPost.jobKeyResponsibilities);
+
+                            const applicantSize = jobPost.applicantSize || 'N/A'; // Example default value
+                            const employmentType = jobPost.employmentType || 'N/A'; // Example default value
+
+                            // Split the benefits string into an array
+                            const benefitsArray = jobPost.benefits.split(', '); // Assuming benefits are stored as a comma-separated string
+
+                            // Create HTML for benefits
+                            const benefitsHtml = benefitsArray.map(benefit => `<li>${benefit.trim()}</li>`).join('');
+
+                            const jobDetailsHtml = `
              <div id="jobDetails" style="flex: 1; padding:50px;">
                 <div id="jobHeader" class="header sticky-top bg-white p-4 mt-0" style="z-index: 1000; position: sticky; top: 0; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
                     <h2 style="margin-bottom: 1px;">${jobPost.jobTitle}</h2>
@@ -509,27 +553,27 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
             </div>
         `;
 
-                        $('#job-details-container').html(jobDetailsHtml).show();
-                    } else {
-                        console.log('Job post not found');
-                    }
-                };
+                            $('#job-details-container').html(jobDetailsHtml).show();
+                        } else {
+                            console.log('Job post not found');
+                        }
+                    };
 
-            });
-        </script>
+                });
+            </script>
 
-        <script>
-            function resetFilter() {
-                // Reload the page without the 'filter' and 'search' query parameters
-                const url = new URL(window.location.href);
-                url.searchParams.delete('filter_type');
-                url.searchParams.delete('filter_minSalary');
-                url.searchParams.delete('filter_time');
-                url.searchParams.delete('search');
-                window.location.href = url.href; // Navigate to the reset URL
-            }
-        </script>
-        <script src="../../Assets/Js/tooltip.js" defer></script>
+            <script>
+                function resetFilter() {
+                    // Reload the page without the 'filter' and 'search' query parameters
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('filter_type');
+                    url.searchParams.delete('filter_minSalary');
+                    url.searchParams.delete('filter_time');
+                    url.searchParams.delete('search');
+                    window.location.href = url.href; // Navigate to the reset URL
+                }
+            </script>
+            <script src="../../Assets/Js/tooltip.js" defer></script>
 
 
 </body>

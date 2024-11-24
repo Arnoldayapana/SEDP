@@ -116,7 +116,7 @@ $benefits = $benefitController->getFilteredBenefit($search);
                                     <!-- Edit Modal -->
                                     <div class="modal fade" id="editBenefitModal<?= $row['benefitId'] ?>" tabindex="-1" aria-labelledby="editBenefitModalLabel<?= $row['benefitId'] ?>" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered modal-lg">
-                                            <div class="modal-content rounded-3 shadow-lg border-0">
+                                            <div class="modal-content rounded-3 shadow-lg border-0" style="width: 800px;">
                                                 <div class="modal-header bg-primary text-white">
                                                     <h5 class="modal-title fw-bold" id="editBenefitModalLabel<?= $row['benefitId'] ?>">
                                                         <i class="bi bi-pencil-square me-2"></i>Edit Benefit
@@ -519,7 +519,7 @@ $benefits = $benefitController->getFilteredBenefit($search);
                     </div>
 
                     <form id="createJobForm" action="../Controller/JobController.php?action=create" method="POST" enctype="multipart/form-data">
-                        <div class="modal-body" style="height: 400px; overflow-y: auto;">
+                        <div class="modal-body" style="height: 500px; overflow-y: auto;">
                             <div class="bg-white m-1 p-1">
                                 <!-- Job Title -->
                                 <div class="col-md-12 mb-2">
@@ -536,7 +536,7 @@ $benefits = $benefitController->getFilteredBenefit($search);
                                 </div>
                                 <br>
                                 <hr>
-                                <!--  Qualification -->
+                                <!-- Qualification -->
                                 <div class="container my-2 col-md-12">
                                     <div class="form-group">
                                         <label for="qualification">Qualification</label>
@@ -569,9 +569,10 @@ $benefits = $benefitController->getFilteredBenefit($search);
             </div>
         </div>
 
+
         <!-- Create Employment Type Modal -->
         <div class="modal fade" id="CreateEmploymentType" tabindex="-1" aria-labelledby="createEmploymentTypeLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-dialog modal-dialog-centered custom-modal-width">
                 <div class="modal-content rounded-3 shadow-lg border-0">
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title fw-bold" id="createEmploymentTypeLabel">
@@ -631,6 +632,11 @@ $benefits = $benefitController->getFilteredBenefit($search);
 
     </main>
 </div>
+<style>
+    .custom-modal-width {
+        max-width: 600px;
+    }
+</style>
 
 <!-- JavaScript for tab behavior and highlighting -->
 <script>

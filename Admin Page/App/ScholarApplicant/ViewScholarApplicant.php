@@ -213,7 +213,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'view') {
                                         placeholder="<?php echo htmlspecialchars($scholar['contact']); ?>" disabled>
                                 </div>
                             </div>
-
                         </div>
                         <div class="d-flex">
                             <!-- Applicant form File Upload -->
