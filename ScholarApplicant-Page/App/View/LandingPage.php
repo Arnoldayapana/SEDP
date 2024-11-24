@@ -40,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <a class="navbar-brand text-white align-text-center fw-bolder fs-5" href="../../../index.php">
                 SEDP Simbag Sa Pag-Asenso Inc.
             </a>
+            <a href="SearchApplicationStatus.php" style="text-decoration: none; color:whitesmoke; font-size:15px;"><i class="bi bi-patch-exclamation-fill"></i> Application Status</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -54,7 +55,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <li class="breadcrumb-item active" aria-current="page">Scholarship Landing Pages</li>
                 </ol>
                 <div class="ms-auto m-2">
-                    <a href="../Form/ScholarForm.doc" class="btn text-white fw-500" style="background-color: #003c3c;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Tooltip on bottom">Download File</a>
+                    <a href="../Form/ScholarForm.doc" class="btn text-white fw-500" style="background-color: #003c3c;"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Scholar ship file">Download File</a>
                 </div>
             </nav>
         </div>
@@ -90,9 +92,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border: 1px solid rgba(255, 255, 255, 0.37);
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
 </html>

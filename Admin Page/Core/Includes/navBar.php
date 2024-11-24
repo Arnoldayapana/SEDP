@@ -18,12 +18,10 @@
                     </div>
                 </div>
 
-
-
-
                 <!-- Calendar Layout -->
-                <div class="d-flex align-items-center shadow-sm" style="height: 40px; width: 170px; background-color: #fff; border-radius: 12px; padding-left: 6px;">
-                    <i class="bi bi-calendar2-week me-2" style="font-size: 1.3rem; color: #003c3c;"></i> <!-- Calendar Icon -->
+                <div class="d-flex align-items-center shadow-sm p-2" style="height: 40px; width: auto; 
+                background-color: #fff; border-radius: 12px; padding-left: 6px;">
+                    <i class="bi bi-calendar2-week me-2 " style="font-size: 1.3rem; color: #003c3c;"></i> <!-- Calendar Icon -->
                     <span id="currentDate" class=" fw-bold" style="color: #003c3c; font-size: 14px;"></span> <!-- Date -->
                 </div>
 
@@ -138,7 +136,7 @@
     // JavaScript to dynamically display the current date
     const date = new Date();
     const options = {
-        month: 'long',
+        month: 'short',
         day: 'numeric',
         year: 'numeric'
     };

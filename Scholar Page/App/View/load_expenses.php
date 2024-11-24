@@ -1,4 +1,11 @@
 <?php
+session_start();  // Start session if needed
+// Ensure that recipient_id is set and valid in session
+if (!isset($_SESSION['recipient_id'])) {
+    die("Recipient ID is not set in the session.");
+}
+$recipient_id = $_SESSION['recipient_id']; // Retrieve recipient_id from the session
+
 $title = 'Scholar Load Expenses | SEDP HRMS';
 $page = 'Scholar Load Expenses';
 include('../../Core/Includes/header.php');
@@ -13,6 +20,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $reportContent = $_POST['reportContent'];
     $fileUpload = $_FILES['fileUpload'];
 
+    // Ensure recipient_id is passed in the form (or retrieved from session)
+    if (isset($_POST['recipient_id'])) {
+        $recipient_id = $_POST['recipient_id']; // Retrieve recipient_id from POST (if passed directly in the form)
+    }
+
     if ($submissionDate) {
         $reportMonth = strtolower(date('F', strtotime($submissionDate)));
     } else {
@@ -22,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Handle file upload
     $fileName = '';
     if (isset($fileUpload) && $fileUpload['error'] == 0) {
-        // Generate a unique name for the file
         $fileName = uniqid() . '-' . basename($fileUpload['name']);
         $targetFilePath = $targetDir . $fileName;
 
@@ -36,14 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     confirmButtonColor: '#003c3c'
                 });
             </script>";
-            exit; // Stop execution if file upload fails
+            exit;
         }
     }
 
     // Insert data into the database
     try {
-        $stmt = $pdo->prepare("INSERT INTO scholar_load_expenses (report_title, submission_date, report_content, file, report_month) 
-                               VALUES (:report_title, :submission_date, :report_content, :file, :report_month)");
+        $stmt = $pdo->prepare("INSERT INTO scholar_load_expenses (report_title, submission_date, report_content, file, report_month , recipient_id)
+                               VALUES (:report_title, :submission_date, :report_content, :file, :report_month , :recipient_id)");
 
         // Bind parameters
         $stmt->bindParam(':report_title', $reportTitle);
@@ -51,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':report_content', $reportContent);
         $stmt->bindParam(':file', $fileName);
         $stmt->bindParam(':report_month', $reportMonth);
+        $stmt->bindParam(':recipient_id', $recipient_id);
 
         if ($stmt->execute()) {
             echo "<script>
@@ -82,14 +94,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-
 $submittedReports = [];
 $stmt = $pdo->query("SELECT report_month FROM scholar_load_expenses");
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $submittedReports[] = strtolower($row['report_month']);
 }
-
 ?>
+
+
 
 
 <?php include('../../Core/Includes/monthCardStyles.php'); ?>
@@ -148,6 +160,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             <div class="container shadow-lg rounded-4 pb-5" style="padding: 1rem 4rem 0; background: linear-gradient(125deg, #003c3c 0%, #004949 15%, #005555 30%, #007373 45%, #008080 60%, #00a6a6 80%, #00b5b5 100%); height: 95%;">
                 <h3 class="fw-bold fs-1 text-center mb-2 text-white">Load Expenses</h3>
                 <form action="" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" class="id" name="id">
+                    <input type="hidden" class="recipient_id" name="recipient_id">
                     <div class="mb-2">
                         <label for="reportTitle" class="form-label text-white">Report Title</label>
                         <input type="text" class="form-control shadow-sm border-0 bg-white text-dark" id="reportTitle" name="reportTitle" placeholder="Enter report title" required>

@@ -84,7 +84,7 @@ if ($result && $result->num_rows > 0) {
                                     <td><?php echo htmlspecialchars($recipient['contact']); ?></td>
                                     <td><?php echo htmlspecialchars($recipient['archived_at']); ?></td>
                                     <td>
-                                        <a href="../Archive/ViewRecipient.php?id=<?php echo $recipient['recipient_id']; ?>" class="btn btn-warning btn-sm">
+                                        <a href="../Archive/ViewRecipient.php?id=<?php echo $recipient['re_archive_id']; ?>" class="btn btn-warning btn-sm">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     </td>

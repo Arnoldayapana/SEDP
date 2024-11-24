@@ -14,25 +14,25 @@ $username = $email = $ContactNumber = $department = $branch = '';
             <form action="../Dao/Employee-db/AddEmployee_db.php" method="POST">
                 <div class="modal-body" style="max-height: 550px; overflow-y: auto;">
                     <input type="hidden" class="form-control" name="usertype" value="employee">
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <label for="username" class="col col-form-label">Name</label>
                         <input type="text" class="form-control" id="username" name="username" minlength="3" maxlength="50" value="<?php echo htmlspecialchars($username); ?>" required>
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <label for="email" class="col col-form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <label for="ContactNumber" class="col col-form-label">Contact Number</label>
                         <input type="tel" class="form-control" id="ContactNumber" name="ContactNumber" pattern="[0-9]{11}" inputmode="numeric" value="<?php echo htmlspecialchars($ContactNumber); ?>" maxlength="11" required>
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <label for="department" class="col col-form-label">Department</label>
                         <select class="form-select" id="department" name="department" required>
                             <option value="" disabled <?php echo empty($department) ? 'selected' : ''; ?>>Select</option>
                             <?php
                             // Fetch departments from the database
-                            $sql = "SELECT * FROM departments";
+                            $sql = "SELECT * FROM tbldepartment";
                             $result = $connection->query($sql);
                             if (!$result) {
                                 die("Invalid Query: " . $connection->error);
@@ -46,13 +46,13 @@ $username = $email = $ContactNumber = $department = $branch = '';
                             ?>
                         </select>
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <label for="branch" class="col col-form-label">Branch</label>
                         <select class="form-select" id="branch" name="branch" required>
                             <option value="" disabled <?php echo empty($branch) ? 'selected' : ''; ?>>Select</option>
                             <?php
                             // Fetch branches from the database
-                            $sql = "SELECT * FROM branches";
+                            $sql = "SELECT * FROM tblbranch";
                             $result = $connection->query($sql);
                             if (!$result) {
                                 die("Invalid Query: " . $connection->error);
@@ -66,7 +66,7 @@ $username = $email = $ContactNumber = $department = $branch = '';
                             ?>
                         </select>
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <label for="password" class="col col-form-label">Password</label>
                         <div class="input-group">
                             <input type="password" id="password" class="form-control" name="password" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$" title="Password must be at least 8 characters long, include one uppercase letter, one number, and one special character." required>
@@ -75,7 +75,7 @@ $username = $email = $ContactNumber = $department = $branch = '';
                             </span>
                         </div>
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-2">
                         <label for="confirm_password" class="col col-form-label">Confirm Password</label>
                         <div class="input-group">
                             <input type="password" id="confirm_password" class="form-control" name="confirm_password" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$" title="Password must be at least 8 characters long, include one uppercase letter, one number, and one special character." required>

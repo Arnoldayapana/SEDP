@@ -13,10 +13,26 @@ class JobApplicantController
         $this->jobApplicantmodel = new JobApplicantModel();
     }
 
-    // Method to display all job applicants
+    // Method to display applicant Interview Date
     public function ViewApplicantInterviewDatebyUniqId($uniqid)
     {
         return $this->jobApplicantmodel->getApplicantInterviewDatebyUniqId($uniqid);
+    }
+    public function ViewApplicantById($applicantId)
+    {
+        $result = $this->jobApplicantmodel->getApplicantbyId($applicantId);
+
+        if ($result) {
+            echo json_encode([
+                "success" => true,
+                "data" => $result
+            ]);
+        } else {
+            echo json_encode([
+                "success" => false,
+                "message" => "Applicant not found.",
+            ]);
+        }
     }
 
     // Method to display job applicants status
@@ -26,7 +42,7 @@ class JobApplicantController
             $statusId = $this->sanitizeInput($_GET['uniqueId']);
             $status = $this->jobApplicantmodel->viewApplicantStatus($statusId);
 
-            // return the status for direct display
+
             return $status;
         }
     }
@@ -37,8 +53,8 @@ class JobApplicantController
             $postData = $this->sanitizeInput($_POST);
             $fileData = $_FILES;
 
-            error_log(print_r($postData, true)); // Log POST data for debugging
-            error_log(print_r($fileData, true)); // Log file data for debugging
+            error_log(print_r($postData, true));
+            error_log(print_r($fileData, true));
 
             // Initialize an array to store any errors
             $errorMessages = [];
@@ -57,8 +73,10 @@ class JobApplicantController
             $photoFileType = null;
 
             // Directory to store uploaded files
-            $target_dir = "../../../Database/uploads/";
-            $allowedTypes = ['pdf', 'docx', 'doc']; // Allowed file types for form and letter
+            $form_dir = "../../../JobApplicantPage/Files/uploads/applicationForms/";
+            $letter_dir = "../../../JobApplicantPage/Files/uploads/coverletters/";
+            $photo_dir = "../../../JobApplicantPage/Files/uploads/profilePictures/";
+            $allowedTypes = ['pdf', 'docx', 'doc'];
             $allowedImageTypes = ['jpeg', 'jpg', 'png', 'gif'];
 
             // Check for the profile photo upload
@@ -67,7 +85,7 @@ class JobApplicantController
 
                 if (in_array($photoFileType, $allowedImageTypes) && $fileData['photoFileName']['size'] < 2000000) {
                     $photoFileName = uniqid('photo_', true) . '.' . $photoFileType;
-                    $target_file = $target_dir . $photoFileName;
+                    $target_file = $photo_dir . $photoFileName;
 
                     if (!move_uploaded_file($fileData['photoFileName']['tmp_name'], $target_file)) {
                         $errorMessages[] = "There was an error uploading your photo.";
@@ -79,7 +97,7 @@ class JobApplicantController
                     $errorMessages[] = "Invalid photo file type or size. Please upload a valid image.";
                 }
             } else {
-                // No photo uploaded, set default values for placeholder
+
                 $photoFileName = '../../Assets/Images/userimage.png';
                 $photoFileSize = 0;
                 $photoFileType = 'image/png';
@@ -91,7 +109,7 @@ class JobApplicantController
 
                 if (in_array($formFileType, $allowedTypes) && $fileData['formFileName']['size'] < 2000000) {
                     $formFileName = uniqid('form_file_', true) . '.' . $formFileType;
-                    $target_file = $target_dir . $formFileName;
+                    $target_file = $form_dir . $formFileName;
 
                     if (!move_uploaded_file($fileData['formFileName']['tmp_name'], $target_file)) {
                         $errorMessages[] = "There was an error uploading your form file.";
@@ -106,17 +124,17 @@ class JobApplicantController
                 $errorMessages[] = "Application form upload failed. Please try again.";
             }
 
-            // Determine which cover letter option was selected
+
             $coverLetterOption = $postData['coverLetterOption'] ?? '';
 
             // Handle cover letter upload or conversion
             if ($coverLetterOption === 'upload' && isset($fileData['letter']) && $fileData['letter']['error'] === UPLOAD_ERR_OK) {
-                // Handle file upload
+
                 $letterFileType = strtolower(pathinfo($fileData['letter']['name'], PATHINFO_EXTENSION));
 
                 if (in_array($letterFileType, $allowedTypes) && $fileData['letter']['size'] < 2000000) {
                     $letterFileName = uniqid('letter_file_', true) . '.' . $letterFileType;
-                    $target_file = $target_dir . $letterFileName;
+                    $target_file = $letter_dir . $letterFileName;
 
                     if (!move_uploaded_file($fileData['letter']['tmp_name'], $target_file)) {
                         $errorMessages[] = "Error uploading your cover letter file.";
@@ -127,18 +145,18 @@ class JobApplicantController
                 } else {
                     $errorMessages[] = "Invalid cover letter file type or size. Please upload a valid document.";
                 }
-            } elseif ($coverLetterOption === 'write') { // Write Cover Letter
+            } elseif ($coverLetterOption === 'write') {
                 if (empty($postData['coverLetterText'])) {
                     $errorMessages[] = "Please provide a cover letter.";
                 } else {
                     // Convert textarea cover letter to PDF
                     $pdf = new FPDF();
                     $pdf->AddPage();
-                    $pdf->SetFont('Arial', 'B', 16);
+                    $pdf->SetFont('Arial', null, 14);
                     $pdf->MultiCell(0, 10, htmlspecialchars(trim($postData['coverLetterText'])));
 
                     $letterFileName = uniqid('letter_', true) . '.pdf';
-                    $target_file = $target_dir . $letterFileName;
+                    $target_file = $letter_dir . $letterFileName;
 
                     $pdf->Output('F', $target_file);
                     $letterFileSize = filesize($target_file);
@@ -245,6 +263,55 @@ class JobApplicantController
             echo json_encode(['success' => $isUpdated]);
         }
     }
+    public function markViewedApplicant()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Retrieve and sanitize applicant ID
+            $applicantId = isset($_POST['applicantId']) ? intval($_POST['applicantId']) : 0;
+
+            if ($applicantId > 0) {
+                // Call the model method to mark as viewed
+                $result = $this->jobApplicantmodel->markAsViewed($applicantId);
+
+                // Return JSON response
+                echo json_encode(['success' => $result]);
+            } else {
+                // Return error response if applicant ID is invalid
+                echo json_encode(['success' => false, 'message' => 'Invalid applicant ID.']);
+            }
+            exit;
+        } else {
+            // Return error response if not a POST request
+            echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+            exit;
+        }
+    }
+    public function filterApplicantsByJobPost()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $input = json_decode(file_get_contents('php://input'), true);
+
+            $jobPostId = isset($input['jobPostId']) ? intval($input['jobPostId']) : null;
+            $filter = $input['filter'] ?? null;
+            $search = $input['search'] ?? null;
+
+            try {
+                if ($jobPostId === null) {
+                    // Fetch all applicants
+                    $filteredApplicants = $this->jobApplicantmodel->getAllJobApplicants($filter, $search);
+                } else {
+                    // Fetch applicants for specific job post
+                    $filteredApplicants = $this->jobApplicantmodel->getJobApplicantsByJobPostId($jobPostId, $filter, $search);
+                }
+                echo json_encode(['success' => true, 'applicants' => $filteredApplicants]);
+            } catch (Exception $e) {
+                echo json_encode(['success' => false, 'message' => 'Error fetching applicants.', 'error' => $e->getMessage()]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+        }
+        exit;
+    }
 }
 
 // Instantiate the controller
@@ -271,6 +338,17 @@ if (isset($_GET['action'])) {
         case 'scheduleInterview':
             $controller->updateApplicantScheduleInterview();
             break;
+        case 'markViewed':
+            $controller->markViewedApplicant();
+            break;
+        case 'filterApplicants':
+            $controller->filterApplicantsByJobPost();
+            break;
+        case 'ViewApplicantById':
+            $applicantId = $_GET['applicantId'] ?? null;
+            $controller->ViewApplicantById($applicantId);
+            break;
+
         default:
             // Handle unknown action
             break;

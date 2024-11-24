@@ -263,7 +263,9 @@ include('../../Core/Includes/header.php');
                                                                     <input type="hidden" name="letterFileName" value="<?= $row['letterFileName'] ?>">
                                                                     <input type="hidden" name="photoFileName" value="<?= $row['photoFileName'] ?>">
 
-                                                                    <p>Are you sure you want to delete Applicant <strong>"<?= htmlspecialchars($row['applicantName']) ?>"</strong> with applied position of <strong>"<?= htmlspecialchars($row['jobTitle']) ?>"</strong>? This action cannot be undone.</p>
+                                                                    <p>Are you sure you want to delete Applicant <strong>"
+                                                                            <?= htmlspecialchars($row['applicantName']) ?>
+                                                                            "</strong> with applied position of <strong>"<?= htmlspecialchars($row['jobTitle']) ?>"</strong>? This action cannot be undone.</p>
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -275,8 +277,8 @@ include('../../Core/Includes/header.php');
                                                 </div>
                                                 <!-- View Applicant Modal -->
                                                 <div class="modal fade" id="applicantViewModal<?= $row['applicantId'] ?>" tabindex="-1" aria-labelledby="applicantViewModalLabel<?= $row['applicantId'] ?>" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-xl">
-                                                        <div class="modal-content" style="font-size: 12px; font-family: Arial;">
+                                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                        <div class="modal-content w-100" style="font-size: 12px; font-family: Arial;">
                                                             <!-- Modal Header -->
                                                             <div class="modal-header">
                                                                 <h5 class="modal-title" id="applicantViewModalLabel">Applicant Details</h5>
@@ -376,7 +378,7 @@ include('../../Core/Includes/header.php');
 
                                                             <!-- Modal Footer -->
                                                             <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn text-white" data-bs-dismiss="modal" style="background: #003c3c;">Close</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -387,7 +389,7 @@ include('../../Core/Includes/header.php');
                                                         <div class='modal-content'>
                                                             <div class='modal-header'>
                                                                 <h5 class='modal-title fw-bold mb-0' id='scheduleModalLabel'>
-                                                                    <p style="font-size: 12px; color:darkgrey; margin-bottom:0%;">Schedule Interview for,</p> <?= htmlspecialchars($row['applicantName']) ?>
+                                                                    <p style="font-size: 12px; color:darkgrey; margin-bottom:0%;"> Interview for,</p> <?= htmlspecialchars($row['applicantName']) ?>
                                                                 </h5>
                                                                 <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                                                             </div>

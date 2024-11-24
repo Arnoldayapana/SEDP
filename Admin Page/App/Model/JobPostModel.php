@@ -176,7 +176,7 @@ class JobPostModel
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
+    /*
     // Method to retrieve job offers with filtering and search criteria
     public function getJobPostsWithFilters($filter, $search)
     {
@@ -199,6 +199,7 @@ class JobPostModel
         et.employmentType,
         
         b.branchId,
+        b.name AS branchName,
         b.country,
         b.region,
         b.province,
@@ -245,7 +246,80 @@ class JobPostModel
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+*/
 
+    // Method to retrieve job offers with filtering and search criteria
+    public function getJobPostsWithFilters($filter, $search)
+    {
+        $sql = "
+    SELECT 
+        jp.jobPostId,
+        jp.applicantSize,
+        jp.minimumSalary,
+        jp.maximumSalary,
+        jp.datePosted,
+        jp.expiryDate,
+        
+        j.jobId,
+        j.jobTitle,
+        
+        d.departmentId,
+        d.name AS departmentName,
+        
+        et.employmentTypeId,
+        et.employmentType,
+        
+        b.branchId,
+        b.name AS branchName,
+        b.country,
+        b.region,
+        b.province,
+        b.city, 
+        
+     GROUP_CONCAT(DISTINCT bf.benefit SEPARATOR ', ') AS benefits,
+    COUNT(DISTINCT ja.applicantId) AS applicantCount
+    FROM 
+        tblJobPost jp
+        LEFT JOIN tblJob j ON jp.jobId = j.jobId
+        LEFT JOIN tblDepartment d ON jp.departmentId = d.departmentId
+        LEFT JOIN tblEmploymentType et ON jp.employeeTypeId = et.employmentTypeId
+        LEFT JOIN tblBranch b ON d.branchId = b.branchId
+        LEFT JOIN tblJobPostBenefit jb ON jp.jobPostId = jb.jobPostId
+        LEFT JOIN tblBenefit bf ON jb.benefitId = bf.benefitId
+        LEFT JOIN tblJobApplicant ja ON jp.jobPostId = ja.jobPostId
+    GROUP BY 
+        jp.jobPostId
+    ";
+
+
+        // Apply search logic
+        if (!empty($search)) {
+            // Move the WHERE clause before the GROUP BY
+            $sql .= " HAVING j.jobTitle LIKE :search";
+        }
+
+        // Apply filter logic
+        if ($filter === 'newest') {
+            $sql .= " ORDER BY jp.datePosted DESC";
+        } elseif ($filter === 'oldest') {
+            $sql .= " ORDER BY jp.datePosted ASC";
+        } else {
+            // Default ordering
+            $sql .= " ORDER BY jp.jobPostId";
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+
+        // Bind search parameter if it exists
+        if (!empty($search)) {
+            $searchParam = "%$search%";
+            $stmt->bindParam(':search', $searchParam, PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     // Method to update job offer
     public function updateJobPost($jobPostId, $postData)
@@ -255,6 +329,7 @@ class JobPostModel
         $applicantSize = trim($postData['applicantSize'] ?? '');
         $minimumSalary = str_replace(',', '', trim($postData['minimumSalary'] ?? ''));
         $maximumSalary = str_replace(',', '', trim($postData['maximumSalary'] ?? ''));
+        $datePosted = date('Y-m-d H:i:s');  // PHP date function to get the current date and time
         $jobPostDescription = trim($postData['jobPostDescription']);
         $jobPostKeyResponsibilities = trim($postData['jobPostKeyResponsibilities']);
         $jobPostQualification = trim($postData['jobPostQualification']);
@@ -265,9 +340,9 @@ class JobPostModel
         $benefitIds = trim($postData['benefitId'] ?? ''); // Comma-separated benefit IDs
 
         // Update the main job post data in tblJobPost
-        $stmt = $this->pdo->prepare("UPDATE tblJobPost SET applicantSize = ?, minimumSalary = ?, maximumSalary = ?, jobPostDescription= ?, jobPostKeyResponsibilities= ?, jobPostQualification= ?, expiryDate = ?, jobId = ?, departmentId = ?, employeeTypeId = ? WHERE jobPostId = ?");
+        $stmt = $this->pdo->prepare("UPDATE tblJobPost SET applicantSize = ?, minimumSalary = ?, maximumSalary = ?, datePosted=?, jobPostDescription= ?, jobPostKeyResponsibilities= ?, jobPostQualification= ?, expiryDate = ?, jobId = ?, departmentId = ?, employeeTypeId = ? WHERE jobPostId = ?");
 
-        if ($stmt->execute([$applicantSize, $minimumSalary, $maximumSalary, $jobPostDescription, $jobPostKeyResponsibilities, $jobPostQualification, $expiryDate, $jobId, $departmentId, $employeeTypeId, $jobPostId])) {
+        if ($stmt->execute([$applicantSize, $minimumSalary, $maximumSalary, $datePosted, $jobPostDescription, $jobPostKeyResponsibilities, $jobPostQualification, $expiryDate, $jobId, $departmentId, $employeeTypeId, $jobPostId])) {
             // Delete existing benefits associated with this job post
             $stmtDeleteBenefits = $this->pdo->prepare("DELETE FROM tblJobPostBenefit WHERE jobPostId = ?");
             $stmtDeleteBenefits->execute([$jobPostId]);

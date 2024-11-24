@@ -7,8 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Step 1: Archive the employee data
         // Insert the employee data into the employee_archive table before deleting from employees
-        $archive_sql = "INSERT INTO employee_archive (employee_id, username, branch, department, email, ContactNumber,hire_date, archived_at)
-                        SELECT employee_id, username, branch, department, email,ContactNumber,hire_date NOW()
+        $archive_sql = "INSERT INTO employee_archive (employee_id, username, branch, department, email, ContactNumber, hire_date, archived_at)
+                        SELECT employee_id, username, branch, department, email, ContactNumber, hire_date, NOW()
                         FROM employees
                         WHERE employee_id = ?";
         $archive_stmt = $connection->prepare($archive_sql);
@@ -23,18 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute();
 
             if ($stmt->affected_rows > 0) {
-                // Step 3: Renumber remaining employee_id values after deletion
-                $sql_reorder = "SET @new_id = 0";
-                $connection->query($sql_reorder);
-
-                // Update the employee_id by incrementing with new sequential values
-                $sql_update_ids = "UPDATE employees SET employee_id = (@new_id := @new_id + 1) ORDER BY employee_id";
-                $connection->query($sql_update_ids);
-
-                // Step 4: Reset AUTO_INCREMENT to the correct value
-                $sql_reset_ai = "ALTER TABLE employees AUTO_INCREMENT = 1";
-                $connection->query($sql_reset_ai);
-
                 // Success: Redirect to employee page with success message
                 header("location:../../View/Employee.php?msg=Employee data archived and deleted successfully!");
                 exit;

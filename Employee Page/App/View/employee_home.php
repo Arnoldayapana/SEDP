@@ -46,6 +46,52 @@ include('../../Core/Includes/header.php');
     .progress-bar {
         background-color: #003c3c;
     }
+
+    .announcement-image {
+        width: 100%;
+        /* Make the container span the full width */
+        height: 300px;
+        /* Set a height for the container (adjust as needed) */
+        background-size: cover;
+        /* Ensures the background image covers the full container */
+        background-position: center;
+        /* Centers the image inside the container */
+        background-repeat: no-repeat;
+        /* Prevents tiling of the image */
+        border-radius: 4px;
+        margin-top: 3rem;
+        /* Rounded corners */
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .announcement-image {
+            height: 250px;
+            /* Reduce the height for smaller screens */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .announcement-image {
+            height: 200px;
+            /* Further reduce the height for mobile screens */
+        }
+    }
+
+    .announcement-content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+
+    .announcement-image {
+        width: 100%;
+        height: 300px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 4px;
+    }
 </style>
 </head>
 
@@ -84,9 +130,9 @@ include('../../Core/Includes/header.php');
                                 <?php
                                 include("../../../Database/db.php");
 
-                                $sql = "SELECT id, title, content, image, posted_date 
-                                FROM announcement 
-                                ORDER BY posted_date DESC 
+                                $sql = "SELECT announcement_id, title, content, image, created_at 
+                                FROM announcements  WHERE audience = 'employee' OR audience = 'both'
+                                ORDER BY created_at DESC 
                                 LIMIT 1";
 
                                 $result = $connection->query($sql);
@@ -95,10 +141,10 @@ include('../../Core/Includes/header.php');
                                 if ($result->num_rows > 0) {
 
                                     $row = $result->fetch_assoc();
-                                    $posted_date = $row['posted_date'];
+                                    $created_at = $row['created_at'];
 
                                     echo "
-                                    <strong class='text-muted' id='postedTime' style='font-size: 10px;' data-time='" . htmlspecialchars($posted_date) . "'>Posted: <span id='timeAgo'></span></strong>
+                                    <strong class='text-muted' id='postedTime' style='font-size: 10px;' data-time='" . htmlspecialchars($created_at) . "'>Posted: <span id='timeAgo'></span></strong>
                                     <script>
                                         function timeAgo() {
                                             const postedDate = new Date(document.getElementById('postedTime').getAttribute('data-time'));
@@ -137,10 +183,10 @@ include('../../Core/Includes/header.php');
                     </div>
                     <div class="announcement shadow rounded p-4 mt-3 bg-white">
                         <?php
-                        $sql = "SELECT id, title, content, posted_date 
-                                FROM announcement 
-                                ORDER BY posted_date DESC 
-                                LIMIT 1";
+                        $sql = "SELECT announcement_id, title, content, image, created_at 
+                        FROM announcements WHERE audience = 'employee' OR audience = 'both'
+                        ORDER BY created_at DESC 
+                        LIMIT 1";
 
                         $result = $connection->query($sql);
 
@@ -148,11 +194,19 @@ include('../../Core/Includes/header.php');
                             $row = $result->fetch_assoc();
                             $title = $row['title'];
                             $content = $row['content'];
+                            $image = $row['image'];
+
+                            if (!empty($image)) {
+                                $imagePath = '../Uploads/images/' . $image;
+                            } else {
+                                $imagePath = '../Uploads/images/announcement.png';
+                            }
 
                             echo "
-                            <h1 class='fs-4 m-2 p-1 fw-bold '>" . htmlspecialchars($title) . "</h1>
-                            <p class='m-2 p-2'>" . htmlspecialchars($content) . "</p>
-                            <img src='../../Public/Assets/Images/announcement.png' alt='Announcement Image' class='mt-3' style='width: 100%; height: 340px; border-radius: 6px; '>
+                            <h1 class='fs-4 p-2 m-1 fw-bold'>" . htmlspecialchars($title) . "</h1>
+                            <p class='announcement-content m-2'>" . htmlspecialchars($content) . "</p>
+                            <div class='announcement-image' style='background-image: url(" . htmlspecialchars($imagePath) . ");'>
+                            </div>
                             ";
                         } else {
                             echo "<p>No announcements found.</p>";

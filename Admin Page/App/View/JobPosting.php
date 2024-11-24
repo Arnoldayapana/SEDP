@@ -1,4 +1,6 @@
 <?php
+$page = 'jobposting';
+
 require_once(__DIR__ . '/../Controller/JobPostController.php');
 require_once(__DIR__ . '/../Controller/DepartmentController.php');
 require_once(__DIR__ . '/../Controller/JobController.php');
@@ -127,7 +129,7 @@ include('../../../Database/db.php');
 
                                                 <!-- View JobPost Modal -->
                                                 <div class="modal fade" id="viewModal<?= $row['jobPostId'] ?>" tabindex="-1" aria-labelledby="viewModalLabel<?= $row['jobPostId'] ?>" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-dialog modal-dialog-centered modal-xl">
                                                         <div class="modal-content" style="font-size: 15px; font-family: Arial;">
                                                             <!-- Modal Header -->
                                                             <div class="modal-header">
@@ -149,11 +151,10 @@ include('../../../Database/db.php');
 
                                                 <!-- Edit Job Post Modal -->
                                                 <div class="modal fade" id="editModal<?= $row['jobPostId'] ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $row['jobPostId'] ?>" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                                                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                                                    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
                                                         <div class="modal-content">
                                                             <div class="modal-header bg-primary text-white">
                                                                 <h5 class="modal-title" id="editJobPostLabel">Edit Job Post</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
 
                                                             <form id="editJobForm" action="../Controller/JobPostController.php?action=update" method="POST" enctype="multipart/form-data">
@@ -347,7 +348,7 @@ include('../../../Database/db.php');
         </div>
         <!-- Create Job Post Modal with Multi-Step Form -->
         <div class="modal fade" id="CreateJobPost" tabindex="-1" aria-labelledby="createJobPostLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title" id="createJobPostLabel">New Job Post</h5>
@@ -587,13 +588,14 @@ include('../../../Database/db.php');
             }
 
             .benefit-container {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                /* 3 equal columns */
+                display: flex;
+                flex-wrap: wrap;
+                /* Allows wrapping to the next row if necessary */
                 gap: 10px;
-                /* Add spacing between badges */
+                /* Adds spacing between the chips */
                 margin-top: 10px;
             }
+
 
             .benefit-container .badge {
                 display: flex;

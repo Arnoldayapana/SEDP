@@ -1,4 +1,6 @@
 <?php
+session_start();
+$recipient_id = $_SESSION['recipient_id'];
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -79,7 +81,7 @@ if (date('m-d') == '01-01') {
                             <h5 class="card-title text-uppercase" style="color: #003c3c; font-weight: 600; letter-spacing: 0.5px; font-size: 1.7rem;">' . $month . '</h5>
                             <p class="card-text text-muted" style="font-size: 0.80rem;">Click below to view or submit files.</p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <a href="load_expenses.php?month=' . $monthKey . '" class="btn btn-lg" style="background-color: #003c3c; color: #fff; border-radius: 5px; padding: 7px 23px; font-size: 0.7rem; font-weight: 700;">View Forms</a>
+                                <a href="load_expenses.php?recipient_id,month=' . $monthKey . '" class="btn btn-lg" style="background-color: #003c3c; color: #fff; border-radius: 5px; padding: 7px 23px; font-size: 0.7rem; font-weight: 700;">View Forms</a>
                                 <span class="badge text-white" style="width: 50%;padding: 10px 0;background-color: ' . ($status === 'Submitted' ? '#28a745' : ($status === 'Pending' ? '#ffc107' : '#dc3545')) . ';">' . $status . '</span>
                             </div>
                         </div>

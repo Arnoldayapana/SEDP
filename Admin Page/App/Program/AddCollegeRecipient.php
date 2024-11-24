@@ -11,20 +11,20 @@
                         <div class="modal-body">
 
                             <input type="hidden" name="recipient_id" value="<?php echo htmlspecialchars($recipient_id); ?>">
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label class="col-sm-6 col-form-label">Name</label>
                                 <input type="text" class="form-control" name="name" value="<?php echo $name; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label class="col-sm-6 col-form-label">Email</label>
                                 <input type="email" class="form-control" name="email" value="<?php echo $email; ?>">
                             </div>
 
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label class="col-sm-6 col-form-label">School</label>
                                 <input type=" text" class="form-control" name="school" value="<?php echo $school; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label class="col-sm-6 col-form-label">Contact Number</label>
                                 <input type=" number" class="form-control" name="contact" value="<?php echo $contact; ?>">
                             </div>
@@ -34,7 +34,7 @@
                                     <option value="" disabled <?php echo empty($branch) ? 'selected' : ''; ?>>Select</option>
                                     <?php
                                     // Fetch branches from the database
-                                    $sql = "SELECT * FROM branches";
+                                    $sql = "SELECT * FROM tblbranch";
                                     $result = $connection->query($sql);
                                     if (!$result) {
                                         die("Invalid Query: " . $connection->error);
@@ -48,7 +48,7 @@
                                     ?>
                                 </select>
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-1">
                                 <label class="col col-form-label">GradeLevel</label>
                                 <input type="text" class="form-control" name="GradeLevel" value="College">
                             </div>

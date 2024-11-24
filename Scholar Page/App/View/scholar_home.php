@@ -46,6 +46,53 @@ include('../../Core/Includes/header.php');
     .progress-bar {
         background-color: #003c3c;
     }
+
+    /* Container styles */
+    .announcement-image {
+        width: 100%;
+        /* Make the container span the full width */
+        height: 300px;
+        /* Set a height for the container (adjust as needed) */
+        background-size: cover;
+        /* Ensures the background image covers the full container */
+        background-position: center;
+        /* Centers the image inside the container */
+        background-repeat: no-repeat;
+        /* Prevents tiling of the image */
+        border-radius: 4px;
+        margin-top: 3rem;
+        /* Rounded corners */
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .announcement-image {
+            height: 250px;
+            /* Reduce the height for smaller screens */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .announcement-image {
+            height: 200px;
+            /* Further reduce the height for mobile screens */
+        }
+    }
+
+    .announcement-content {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+
+    .announcement-image {
+        width: 100%;
+        height: 300px;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 4px;
+    }
 </style>
 </head>
 
@@ -86,9 +133,9 @@ include('../../Core/Includes/header.php');
                                 <?php
                                 include("../../../Database/db.php");
 
-                                $sql = "SELECT id, title, content, image, posted_date 
-                                FROM announcement 
-                                ORDER BY posted_date DESC 
+                                $sql = "SELECT announcement_id, title, content, image, created_at 
+                                FROM announcements WHERE audience = 'scholar' OR audience = 'both'
+                                ORDER BY created_at DESC 
                                 LIMIT 1";
 
                                 $result = $connection->query($sql);
@@ -97,7 +144,7 @@ include('../../Core/Includes/header.php');
                                 if ($result->num_rows > 0) {
 
                                     $row = $result->fetch_assoc();
-                                    $posted_date = $row['posted_date'];
+                                    $posted_date = $row['created_at'];
 
                                     echo "
                                     <strong class='text-muted' id='postedTime' style='font-size: 10px;' data-time='" . htmlspecialchars($posted_date) . "'>Posted: <span id='timeAgo'></span></strong>
@@ -139,10 +186,10 @@ include('../../Core/Includes/header.php');
                     </div>
                     <div class="announcement shadow rounded p-4 my-3 bg-white">
                         <?php
-                        $sql = "SELECT id, title, content, posted_date 
-                                FROM announcement 
-                                ORDER BY posted_date DESC 
-                                LIMIT 1";
+                        $sql = "SELECT announcement_id, title, content, image, created_at 
+                        FROM announcements WHERE audience = 'scholar' OR audience = 'both'
+                        ORDER BY created_at DESC 
+                        LIMIT 1";
 
                         $result = $connection->query($sql);
 
@@ -150,23 +197,33 @@ include('../../Core/Includes/header.php');
                             $row = $result->fetch_assoc();
                             $title = $row['title'];
                             $content = $row['content'];
+                            $image = $row['image'];
+
+                            if (!empty($image)) {
+                                $imagePath = '../Uploads/images/' . $image;
+                            } else {
+                                $imagePath = '../Uploads/images/announcement.jpg';
+                            }
 
                             echo "
-                            <h1 class='fs-4 p-2 m-1 fw-bold '>" . htmlspecialchars($title) . "</h1>
-                            <p class='m-2'>" . htmlspecialchars($content) . "</p>
-                            <img src='../../Public/Assets/Images/announcement.png' alt='Announcement Image' class='mt-3' style='width: 100%; height: 280px; border-radius: 6px; '>
+                            <h1 class='fs-4 p-2 m-1 fw-bold'>" . htmlspecialchars($title) . "</h1>
+                            <p class='announcement-content m-2'>" . htmlspecialchars($content) . "</p>
+                            <div class='announcement-image' style='background-image: url(" . htmlspecialchars($imagePath) . ");'>
+                            </div>
                             ";
                         } else {
                             echo "<p>No announcements found.</p>";
                         }
                         ?>
                     </div>
+
+
                 </div>
             </div>
         </div>
 
         <!-- Requirements Tracker -->
-        <?php include('../../Core/Includes/requirementTracker.php');?>
+        <?php include('../../Core/Includes/requirementTracker.php'); ?>
 
         <div class="col-md-12 shadow rounded p-4 mb-4" style="background-color: #f0f9f9;">
             <div class="dashboard-card">
@@ -202,7 +259,7 @@ include('../../Core/Includes/header.php');
     <!-- Footer  -->
     <div class="container-fluid bg-dark text-center text-light" style="padding: 10px 0;">
         <div class="footer-content" style="min-height: 100px; line-height: 30px;">
-            
+
             <ul class="list-inline mb-2">
                 <li class="list-inline-item "><a href="https://sedp.ph/about-us/" class="text-light text-decoration-none">About Us</a></li>
                 <li class="list-inline-item"><a href="https://sedp.ph/services/" class="text-light text-decoration-none">Services</a></li>
@@ -221,7 +278,7 @@ include('../../Core/Includes/header.php');
             <p class="mb-2">&copy; 2024 Your Organization. All Rights Reserved.</p>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.6/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

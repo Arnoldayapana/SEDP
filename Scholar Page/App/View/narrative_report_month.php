@@ -1,4 +1,4 @@
-<?php 
+<?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -13,13 +13,13 @@ if (!$connection) {
 
 // Fetch report status data from 'scholar_narrative_reports' table
 $statusData = [];
-$query = "SELECT report_status, report_month FROM scholar_narrative_reports"; 
+$query = "SELECT report_status, report_month FROM scholar_narrative_reports";
 
 $result = $connection->query($query);
 
 // Check if query execution was successful
 if (!$result) {
-    die("Query failed: " . $connection->error); 
+    die("Query failed: " . $connection->error);
 }
 
 if ($result->num_rows > 0) {
@@ -33,7 +33,7 @@ if ($result->num_rows > 0) {
 // Check if today's date is January 1st
 if (date('m-d') == '01-01') {
     $resetQuery = "UPDATE scholar_narrative_reports SET report_status = 'Not Submitted'";
-    
+
     if ($connection->query($resetQuery) === TRUE) {
         echo "Report statuses reset successfully.";
     } else {
@@ -45,19 +45,28 @@ if (date('m-d') == '01-01') {
 <div class="container-fluid" style="margin-top: 5.5rem;">
     <h1 class="text-center text-uppercase text-dark" style="color: #003c3c; font-weight: 700; letter-spacing: 1px; font-size: 2.5rem;"><?php echo $page; ?></h1>
     <div class="row mt-5">
-        <?php 
+        <?php
         // List of months for which reports can be submitted
         $months = [
-            'January', 'February', 'March', 'April', 'May', 
-            'June', 'July', 'August', 'September', 'October', 
-            'November', 'December'
+            'January',
+            'February',
+            'March',
+            'April',
+            'May',
+            'June',
+            'July',
+            'August',
+            'September',
+            'October',
+            'November',
+            'December'
         ];
 
         foreach ($months as $month) {
             $monthKey = strtolower($month);
 
             // Check the actual status in the database
-            $status = $statusData[$monthKey] ?? 'Not Submitted'; 
+            $status = $statusData[$monthKey] ?? 'Not Submitted';
 
             echo '
             <div class="col-md-4 mb-4">
@@ -88,4 +97,5 @@ if (date('m-d') == '01-01') {
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

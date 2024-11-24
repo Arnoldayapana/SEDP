@@ -95,6 +95,9 @@
                         <li class="sidebar-item">
                             <a href="../../App/View/JobApplicants.php" class="sidebar-link mx-4">Applicants</a>
                         </li>
+                        <li class="sidebar-item">
+                            <a href="../../App/View/JobApplicants2.php" class="sidebar-link mx-4">Applicants2</a>
+                        </li>
                     </ul>
                 </li>
                 <li class="sidebar-item">

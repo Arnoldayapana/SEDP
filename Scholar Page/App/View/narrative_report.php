@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':report_title', $reportTitle);
         $stmt->bindParam(':submission_date', $submissionDate);
         $stmt->bindParam(':report_content', $reportContent);
-        $stmt->bindParam(':file', $fileName); 
+        $stmt->bindParam(':file', $fileName);
         $stmt->bindParam(':report_month', $reportMonth);
 
         if ($stmt->execute()) {
@@ -98,17 +98,26 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     <div class="row">
         <div class="col-md-4" style="max-height: 600px; overflow-y: auto; -ms-overflow-style: none; scrollbar-width: none; border-radius: 12px;">
             <div class="row" id="monthCardsContainer">
-                <?php 
+                <?php
                 $months = [
-                    'January', 'February', 'March', 'April', 'May', 
-                    'June', 'July', 'August', 'September', 'October', 
-                    'November', 'December'
+                    'January',
+                    'February',
+                    'March',
+                    'April',
+                    'May',
+                    'June',
+                    'July',
+                    'August',
+                    'September',
+                    'October',
+                    'November',
+                    'December'
                 ];
 
                 foreach ($months as $month) {
                     $lowercaseMonth = strtolower($month);
                     $isSelected = ($lowercaseMonth === $selectedMonth) ? 'selected' : '';
-                    
+
                     // Check status for each month
                     $status = in_array($lowercaseMonth, $submittedReports) ? 'Submitted' : 'Pending';
 
@@ -139,6 +148,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             <div class="container shadow-lg rounded-4 pb-5" style="padding: 1rem 4rem 0; background: linear-gradient(125deg, #003c3c 0%, #004949 15%, #005555 30%, #007373 45%, #008080 60%, #00a6a6 80%, #00b5b5 100%); height: 95%;">
                 <h3 class="fw-bold fs-1 text-center mb-2 text-white">Narrative Report</h3>
                 <form action="" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" class="recipient_id" name="recipient_id" value="<?php echo $_SESSION['recipient_id']; ?>">
+
                     <div class="mb-2">
                         <label for="reportTitle" class="form-label text-white">Report Title</label>
                         <input type="text" class="form-control shadow-sm border-0 bg-white text-dark" id="reportTitle" name="reportTitle" placeholder="Enter report title" required>

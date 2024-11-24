@@ -1,6 +1,6 @@
 <?php
 $title = 'RecruitmentSetup | SEDP HRMS';
-$page = 'RecruitmentSetup';
+$page = 'recruitmentsetup';
 
 include('../../Core/Includes/header.php');
 
@@ -51,6 +51,7 @@ $benefits = $benefitController->getFilteredBenefit($search);
                     <li onclick="showContent('jobs')" class="list-item active">Jobs</li>
                     <li onclick="showContent('employmentTypes')" class="list-item">Employment Types</li>
                     <li onclick="showContent('benefits')" class="list-item">Benefits</li>
+                    <li onclick="showContent('interviewTypes')" class="list-item">Interview Types</li>
                 </ul>
             </div>
             <hr class=" mb-4 ">
@@ -150,13 +151,13 @@ $benefits = $benefitController->getFilteredBenefit($search);
 
                                     <!-- Edit Job Modal -->
                                     <div class="modal fade" id="editModal<?= $row['jobId'] ?>" tabindex="-1" aria-labelledby="editModalLabel<?= $row['jobId'] ?>" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                                        <div class="modal-dialog modal-dialog-centered modal-xl">
+                                        <div class="modal-dialog modal-dialog-centered modal-fullscreen">
                                             <div class="modal-content rounded-3 shadow-lg border-0">
                                                 <div class="modal-header bg-primary text-white">
                                                     <h5 class="modal-title fw-bold" id="createJobPostLabel">
                                                         <i class="bi bi-pencil-square me-2"></i>Edit Job
                                                     </h5>
-                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
                                                 </div>
                                                 <form id="editJob" action="../Controller/JobController.php?action=update" method="POST" enctype="multipart/form-data">
                                                     <div class="modal-body" style="height: 400px; overflow-y: auto;">
@@ -494,11 +495,21 @@ $benefits = $benefitController->getFilteredBenefit($search);
                     </tbody>
                 </table>
             </div>
+            <!-- Content for Interview Types -->
+            <div id="interviewTypes" class="content-div">
+                <!-- Search Bar , Filter Dropdown , New Button-->
+                <div class="d-flex mb-1">
+                    <div class="mx-3 mt-0">
+                        <p>Interview Content here</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <!-- Create Job Modal -->
         <div class="modal fade" id="CreateJob" tabindex="-1" aria-labelledby="createJobLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-dialog modal-dialog-centered modal-fullscreen">
                 <div class="modal-content rounded-3 shadow-lg border-0">
                     <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title fw-bold" id="createJobLabel">

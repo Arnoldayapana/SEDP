@@ -27,6 +27,73 @@ class JobApplicantModel
         return $interviewDatetime ?: false;
     }
 
+    public function getApplicantbyId($applicantId)
+    {
+        $sql = "SELECT 
+        -- From tblJobApplicant
+        ja.applicantId,
+        ja.uniqueId,
+        ja.name AS applicantName,
+        ja.email,
+        ja.contactNumber,
+        ja.appliedDate,
+        ja.formFileName,
+        ja.formFileSize,
+        ja.formFileType,
+        
+        ja.letterFileName,
+        ja.letterFileSize,
+        ja.letterFileType,
+
+        ja.photoFileName,
+        ja.photoFileSize,
+        ja.photoFileType,
+
+        ja.status,
+        ja.jobPostId,
+
+        -- From tblJobPost
+        jo.jobPostId AS jobPostId,  -- Aliased to avoid conflicts
+        jo.jobId,
+        jo.departmentId,
+
+        -- From tblJob
+        j.jobId,
+        j.jobTitle,
+
+        -- From tblDepartment
+        d.departmentId,
+        d.name AS departmentName,
+        d.branchId,
+
+        -- From tblBranch
+        b.branchId,
+        b.name AS branchName,
+        b.country,
+        b.region,
+        b.province,
+        b.city
+
+    FROM 
+        tbljobapplicant ja
+    JOIN 
+        tblJobPost jo ON ja.jobPostId = jo.jobPostId
+    JOIN 
+        tblJob j ON jo.jobId = j.jobId
+    JOIN 
+        tblDepartment d ON jo.departmentId = d.departmentId
+    JOIN 
+        tblBranch b ON d.branchId = b.branchId
+    WHERE applicantId = ?
+    ";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$applicantId]);
+
+        $applicantDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $applicantDetails ?: false;
+    }
+
 
     public function getJobApplicantsWithFilters($filter, $search)
     {
@@ -52,6 +119,7 @@ class JobApplicantModel
 
         ja.status,
         ja.jobPostId,
+        ja.isViewed,
 
         -- From tblJobPost
         jo.jobPostId AS jobPostId,  -- Aliased to avoid conflicts
@@ -162,15 +230,17 @@ class JobApplicantModel
 
     public function deleteApplicant($applicantId)
     {
+        /*
         // Retrieve file names associated with the applicant
         $stmt = $this->pdo->prepare("SELECT formFileName, letterFileName, photoFileName FROM tbljobapplicant WHERE applicantId = ?");
         $stmt->execute([$applicantId]);
+
         $applicant = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Check and delete the form file if it exists
         if ($applicant && $applicant['formFileName']) {
             $formFileName = $applicant['formFileName'];
-            $formFilePath = "../../../Database/uploads/" . $formFileName; // Define the file path
+            $formFilePath = "../../../JobApplicantPage/Files/uploads/applicationForms/" . $formFileName; // Define the file path
 
             // Delete the form file from the directory if it exists
             if (file_exists($formFilePath)) {
@@ -181,7 +251,7 @@ class JobApplicantModel
         // Check and delete the letter file if it exists
         if ($applicant && $applicant['letterFileName']) {
             $letterFileName = $applicant['letterFileName'];
-            $letterFilePath = "../../../Database/uploads/" . $letterFileName; // Define the file path
+            $letterFilePath = "../../../JobApplicantPage/Files/uploads/coverletters/" . $letterFileName; // Define the file path
 
             // Delete the letter file from the directory if it exists
             if (file_exists($letterFilePath)) {
@@ -192,14 +262,14 @@ class JobApplicantModel
         // Check and delete the photo file if it exists
         if ($applicant && $applicant['photoFileName']) {
             $photoFileName = $applicant['photoFileName'];
-            $photoFilePath = "../../../Database/uploads/" . $photoFileName; // Define the file path
+            $photoFilePath = "../../../JobApplicantPage/Files/uploads/profilePictures/" . $photoFileName; // Define the file path
 
             // Delete the photo file from the directory if it exists
             if (file_exists($photoFilePath)) {
                 unlink($photoFilePath); // Delete the file
             }
         }
-
+        */
         // Delete the applicant from the database
         $stmt = $this->pdo->prepare("DELETE FROM tbljobapplicant WHERE applicantId = ?");
         return $stmt->execute([$applicantId]);
@@ -226,5 +296,99 @@ class JobApplicantModel
 
         // Return true if at least one row was updated
         return $stmt->rowCount() > 0;
+    }
+
+    public function markAsViewed($applicantId)
+    {
+        $query = "UPDATE tblJobApplicant SET isViewed = 1 WHERE applicantId = :applicantId";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':applicantId', $applicantId, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    public function getJobApplicantsByJobPostId($jobPostId, $filter = null, $search = null)
+    {
+        try {
+            $sql = "SELECT 
+                    ja.applicantId, ja.uniqueId, ja.name AS applicantName, ja.email, 
+                    ja.contactNumber, ja.appliedDate, ja.status, ja.isViewed,
+                    j.jobTitle, d.name AS departmentName, b.name AS branchName
+                FROM 
+                    tbljobapplicant ja
+                JOIN 
+                    tblJobPost jo ON ja.jobPostId = jo.jobPostId
+                JOIN 
+                    tblJob j ON jo.jobId = j.jobId
+                JOIN 
+                    tblDepartment d ON jo.departmentId = d.departmentId
+                JOIN 
+                    tblBranch b ON d.branchId = b.branchId
+                WHERE 
+                    ja.jobPostId = :jobPostId";
+
+            // Add search and filter conditions
+            if (!empty($search)) {
+                $sql .= " AND ja.name LIKE :search";
+            }
+            if ($filter === 'newest') {
+                $sql .= " ORDER BY ja.appliedDate DESC";
+            } elseif ($filter === 'oldest') {
+                $sql .= " ORDER BY ja.appliedDate ASC";
+            }
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':jobPostId', $jobPostId, PDO::PARAM_INT);
+            if (!empty($search)) {
+                $searchParam = "%$search%";
+                $stmt->bindParam(':search', $searchParam, PDO::PARAM_STR);
+            }
+
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new Exception("Database error: " . $e->getMessage());
+        }
+    }
+
+    public function getAllJobApplicants($filter = null, $search = null)
+    {
+        try {
+            $sql = "SELECT 
+                ja.applicantId, ja.uniqueId, ja.name AS applicantName, ja.email, 
+                ja.contactNumber, ja.appliedDate, ja.status, ja.isViewed,
+                j.jobTitle, d.name AS departmentName, b.name AS branchName
+            FROM 
+                tbljobapplicant ja
+            JOIN 
+                tblJobPost jo ON ja.jobPostId = jo.jobPostId
+            JOIN 
+                tblJob j ON jo.jobId = j.jobId
+            JOIN 
+                tblDepartment d ON jo.departmentId = d.departmentId
+            JOIN 
+                tblBranch b ON d.branchId = b.branchId";
+
+            // Add search and filter conditions
+            if (!empty($search)) {
+                $sql .= " WHERE ja.name LIKE :search";
+            }
+            if ($filter === 'newest') {
+                $sql .= " ORDER BY ja.appliedDate DESC";
+            } elseif ($filter === 'oldest') {
+                $sql .= " ORDER BY ja.appliedDate ASC";
+            }
+
+            $stmt = $this->pdo->prepare($sql);
+            if (!empty($search)) {
+                $searchParam = "%$search%";
+                $stmt->bindParam(':search', $searchParam, PDO::PARAM_STR);
+            }
+
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new Exception("Database error: " . $e->getMessage());
+        }
     }
 }

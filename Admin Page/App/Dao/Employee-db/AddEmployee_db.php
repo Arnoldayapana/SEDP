@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $confirm_password = "";
 
                 // Redirect after successful form submission
-                header("Location: ../../View/Employee.php?msg=New Employee Added Successfully");
+                header("Location: ../../View/Employee.php?msg=New+Employee Added Successfully!");
                 exit;
             } else {
                 $errorMessage = "Invalid query: " . $connection->error;

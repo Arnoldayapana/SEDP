@@ -14,7 +14,7 @@ $password = "";
 // Handle GET request to load employee data
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (!isset($_GET["employee_id"])) {
-        header("Location: ../../View/Employee.php?error_msg=Missing Employee ID. Please provide a valid ID to view or modify employee details.");
+        header("Location: ../../View/Employee.php?error_msg=missing Employee ID. Please provide a valid ID to view or modify employee details.");
         exit;
     }
 

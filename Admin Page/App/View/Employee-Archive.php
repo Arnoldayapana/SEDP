@@ -6,13 +6,62 @@ include("../../../Database/db.php");
 include('../../Core/Includes/header.php');
 
 // Handle department filters
-$selectedDate = $_GET['archived_at'] ?? '';  // Capture the date sorting selection
+$selectedDate = $_GET['hire_date'] ?? ''; // Capture the date sorting selection
+$searchTerm = $_GET['search'] ?? ''; // Capture search input
 
-// Fetch archived employees from the database using mysqli
-$query = "SELECT * FROM employee_archive ORDER BY archived_at DESC";
-$result = $connection->query($query);
+// Pagination logic
+$limit = 7; // Number of results per page
+$pageNum = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($pageNum - 1) * $limit;
+$status = $_GET['applicant_status'] ?? '';
 
-// Check if the query was successful and fetch the data
+// Fetch total number of archived employees
+$totalCountSql = "SELECT COUNT(*) as total FROM employee_archive";
+$totalResult = $connection->query($totalCountSql);
+$totalRow = $totalResult->fetch_assoc();
+$totalEmployees = $totalRow['total'];
+$totalPages = ceil($totalEmployees / $limit);
+
+// Base query for fetching archived employees
+$query = "SELECT * FROM employee_archive";
+$conditions = [];
+$params = [];
+$types = "";
+
+// Apply search filter if a search term is provided
+if (!empty($searchTerm)) {
+    $conditions[] = "(username LIKE ? OR email LIKE ?)";
+    $searchTermWithWildcards = "%" . $searchTerm . "%";
+    $params[] = $searchTermWithWildcards;
+    $params[] = $searchTermWithWildcards;
+    $types .= "ss";
+}
+
+// Apply date sorting if selected
+if (!empty($selectedDate)) {
+    if ($selectedDate === "newest") {
+        $conditions[] = "1=1 ORDER BY archived_at DESC";
+    } elseif ($selectedDate === "oldest") {
+        $conditions[] = "1=1 ORDER BY archived_at ASC";
+    }
+}
+
+// Build the final query
+if (!empty($conditions)) {
+    $query .= " WHERE " . implode(" AND ", $conditions);
+}
+
+$query .= " LIMIT ? OFFSET ?";
+$params[] = $limit;
+$params[] = $offset;
+$types .= "ii";
+
+$stmt = $connection->prepare($query);
+$stmt->bind_param($types, ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Fetch data
 $archivedEmployees = [];
 if ($result && $result->num_rows > 0) {
     while ($employee = $result->fetch_assoc()) {
@@ -20,18 +69,20 @@ if ($result && $result->num_rows > 0) {
     }
 }
 
+$stmt->close();
 ?>
 <div class="wrapper">
     <!-- Sidebar -->
-    <?php include("../../Core/Includes/sidebar.php"); ?>
+    <?php
+    include('../../Core/Includes/Toasts.php');
+    include("../../Core/Includes/sidebar.php"); ?>
 
     <div class="main p-3">
         <?php include('../../Core/Includes/navBar.php'); ?>
 
-        <div class="container-fluid shadow p-3 mb-5 bg-body-tertiary rounded-4">
-            <?php include('../../Core/Includes/alertMessages.php'); ?>
+        <div class="container-fluid shadow p-3 bg-body-tertiary rounded-2">
 
-            <h3 class="fw-bold fs-4">List Of Archived Employees</h3>
+            <h3 class="fw-bold fs-4">Archived Employees</h3>
             <hr>
 
             <div class="d-flex">
@@ -54,9 +105,9 @@ if ($result && $result->num_rows > 0) {
                 </div>
 
                 <!-- Search Form -->
-                <form id="searchForm" action="../Employee/SearchEmployee.php" method="GET" onsubmit="return validateSearch()">
-                    <div class="input-group mb-3">
-                        <input type="text" id="searchInput" name="search" class="form-control" placeholder="Search here!">
+                <form id="searchForm" action="" method="GET" onsubmit="return validateSearch()">
+                    <div class="input-group mb-1">
+                        <input type="text" id="searchInput" name="search" class="form-control" placeholder="Search here!" value="<?= htmlspecialchars($searchTerm); ?>">
                         <button type="submit" class="btn btn-primary btn-md">
                             <i class="bi bi-search"></i>
                         </button>
@@ -71,7 +122,7 @@ if ($result && $result->num_rows > 0) {
                             <th>Name</th>
                             <th>Email</th>
                             <th>Contact</th>
-                            <th>ARCHIVE_DATE</th>
+                            <th>Archived Date</th>
                             <th>Operations</th>
                         </tr>
                     </thead>
@@ -79,14 +130,17 @@ if ($result && $result->num_rows > 0) {
                         <?php if (!empty($archivedEmployees)): ?>
                             <?php foreach ($archivedEmployees as $employee): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($employee['username']); ?></td>
-                                    <td><?php echo htmlspecialchars($employee['email']); ?></td>
-                                    <td><?php echo htmlspecialchars($employee['ContactNumber']); ?></td>
-                                    <td><?php echo htmlspecialchars($employee['archived_at']); ?></td>
+                                    <td><?= htmlspecialchars($employee['username']); ?></td>
+                                    <td><?= htmlspecialchars($employee['email']); ?></td>
+                                    <td><?= htmlspecialchars($employee['ContactNumber']); ?></td>
+                                    <td><?= htmlspecialchars($employee['archived_at']); ?></td>
                                     <td>
-                                        <a href="../Archive/ViewEmployee.php?id=<?php echo $employee['employee_id']; ?>" class="btn btn-warning btn-sm">
+                                        <a href="../Archive/ViewEmployee.php?id=<?= $employee['employee_id']; ?>" class="btn btn-warning btn-sm">
                                             <i class="bi bi-eye"></i>
                                         </a>
+                                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#DeleteEmployeeArchive" onclick="setEmployeeIdForDelete(<?= $employee['employee_id']; ?>)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -97,10 +151,68 @@ if ($result && $result->num_rows > 0) {
                         <?php endif; ?>
                     </tbody>
                 </table>
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <!-- First Page Button -->
+                            <li class="page-item <?= ($pageNum <= 1) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=1&search=<?= htmlspecialchars($searchTerm); ?>&applicant_status=<?= htmlspecialchars($status); ?>" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+
+                            <!-- Previous Page Button -->
+                            <li class="page-item <?= ($pageNum <= 1) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=<?= $pageNum - 1; ?>&search=<?= htmlspecialchars($searchTerm); ?>&applicant_status=<?= htmlspecialchars($status); ?>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+
+                            <!-- Page Numbers -->
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                <li class="page-item <?= ($i === $pageNum) ? 'active' : ''; ?>">
+                                    <a class="page-link" href="?page=<?= $i; ?>&search=<?= htmlspecialchars($searchTerm); ?>&applicant_status=<?= htmlspecialchars($status); ?>">
+                                        <?= $i; ?>
+                                    </a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <!-- Next Page Button -->
+                            <li class="page-item <?= ($pageNum >= $totalPages) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=<?= $pageNum + 1; ?>&search=<?= htmlspecialchars($searchTerm); ?>&applicant_status=<?= htmlspecialchars($status); ?>" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+
+                            <!-- Last Page Button -->
+                            <li class="page-item <?= ($pageNum >= $totalPages) ? 'disabled' : ''; ?>">
+                                <a class="page-link" href="?page=<?= $totalPages; ?>&search=<?= htmlspecialchars($searchTerm); ?>&applicant_status=<?= htmlspecialchars($status); ?>" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
 
-        <?php include("../../Core/Includes/script.php"); ?>
+        <?php
+        include("../../App/Employee/DeleteEmployeeArchive.php");
+        include("../../Core/Includes/script.php");
+        include("../../Core/Includes/script.php"); ?>
+        <!-- Toasts -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var toastElement = document.getElementById('successToast');
+                if (toastElement) {
+                    var toast = new bootstrap.Toast(toastElement);
+                    toast.show();
+                }
+            });
+        </script>
+
+
     </div>
 </div>
 </body>

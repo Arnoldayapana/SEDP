@@ -34,14 +34,20 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
             font-family: 'Poppins', sans-serif;
         }
 
-        .scrollable-cards,
-        #job-details-container {
+        .scrollable-cards {
             overflow-y: auto;
             /* Enable vertical scrolling */
             max-height: 80vh;
             /* Set a maximum height to enable scrolling */
             padding: 10px;
             /* Adds space around the cards */
+        }
+
+        #job-details-container {
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+            max-height: 80vh;
+            /* Set a maximum height to enable scrolling */
         }
 
         .scrollable-cards::-webkit-scrollbar {
@@ -142,33 +148,8 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
         }
 
         #qualification {
-            background-image: url("View/a.jpg");
+            background-image: url("View/QualificationBack.jpg");
             background-size: cover;
-            backdrop-filter: blur(10px);
-            filter: brightness(90%);
-
-
-        }
-
-        #jobCards {
-            background-image: url("View/2.jpg");
-            background-size: cover;
-            background-position: center;
-            filter: brightness(60%);
-            backdrop-filter: blur(10px);
-            color: #E0E0E0;
-            /* Adjust percentage as needed */
-        }
-
-
-        #card {
-            background: rgba(0, 0, 0, 0.2);
-            /* background: rgba(255, 255, 255, 0.2);*/
-            border-radius: 10px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(4.4px);
-            -webkit-backdrop-filter: blur(4.4px);
-            border: 1px solid rgba(255, 255, 255, 0.65);
         }
     </style>
 </head>
@@ -187,26 +168,21 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
     </nav>
     <!-- Navigation -->
     <nav aria-label="breadcrumb" class="mb-1 d-flex justify-content-between mx-5 mt-3">
-        <div class="container d-flex">
-
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Job Posts</li>
-            </ol>
-            <a href="./View/JobApplicantStatus.php" class="text-decoration-none ms-auto">Application Status</a>
-        </div>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Job Posts</li>
+        </ol>
+        <a href="./View/JobApplicantStatus.php" class="text-decoration-none">Application Status</a>
     </nav>
     <hr class="mx-5 my-0">
     <!-- Image -->
-    <div class="container">
-        <div class="text-center pt-2">
-            <img src="../Assets/Images/job-poster.png" alt="Hiring Image" class="img-fluid rounded shadow my-4" style="height: auto; width: 800px;">
-            <p class="lead text-muted p-2 m-2 my-3 mx-5" style="font-size: 18px;">
-                At <span class="fs-5 fw-bold">SEDP Simbag Sa Pag-Asenso Inc</span>, we foster talent, embrace innovation, and drive success.
-                Join us today and be part <br>
-                of a company that values and invests in your future.
-            </p>
-        </div>
+    <div class="text-center pt-2">
+        <img src="../Assets/Images/job-poster.png" alt="Hiring Image" class="img-fluid rounded shadow my-4" style="height: auto; width: 800px;">
+        <p class="lead text-muted p-2 m-2 my-3 mx-5">
+            At <span class="fs-4 fw-bold">SEDP Simbag Sa Pag-Asenso Inc</span>, we foster talent, embrace innovation, and drive success.
+            Join us today and be part <br>
+            of a company that values and invests in your future.
+        </p>
     </div>
 
 
@@ -267,7 +243,7 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
 
 
     <!-- Search Bar and Filter Dropdown -->
-    <form id="filter-form" method="GET" action="" class="my-5">
+    <form id="filter-form" method="GET" action="" class="mb-2">
         <div class="row justify-content-center mb-2">
             <div class="col-md-6">
                 <div class="input-group">
@@ -319,6 +295,8 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
             </div>
         </div>
     </form>
+    <br>
+    <hr>
 
     <!-- Spinner -->
     <div class="row justify-content-center">
@@ -330,33 +308,30 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
 
     <!-- No results message -->
     <div class="no-results" id="no-results-message">
-        <div class="container">
-            <img src="view/not found.png" alt="img" style="height: 300px; width:270px;">
-            <h1>No Job Available</h1>
-        </div>
+        No jobs found.
     </div>
 
-    <div class="row" id="jobCards">
+    <div class="row">
         <!-- First Column: Cards -->
-        <div class="col-md-5 mt-2 my-2" id="job-cards-container">
+        <div class="col-md-5 mt-3 my-3" id="job-cards-container">
             <div class="scrollable-cards">
                 <?php foreach ($jobPosts as $row): ?>
-                    <div class='card mb-3 shadow' id="card" onclick="showJobDetails(<?= $row['jobPostId'] ?>, this)">
-                        <div class='card-body text-white'>
+                    <div class='card mb-3 shadow' onclick="showJobDetails(<?= $row['jobPostId'] ?>, this)">
+                        <div class='card-body'>
                             <div style="flex: 1;">
                                 <div class="text-end">
-                                    <p class='card-text' style="font-size: 14px; margin-bottom: 0%; color:fff;"><span class="time-ago" data-time="<?= ($row['datePosted']) ?>"></span></p>
+                                    <p class='card-text' style="font-size: 14px; margin-bottom: 0%; color:grey;"><span class="time-ago" data-time="<?= ($row['datePosted']) ?>"></span></p>
                                 </div>
                                 <h4 class="mb-1 ms-3 fw-bold"><?= ($row['jobTitle']) ?></h4>
                                 <div class="row text-start ms-1 mb-4">
-                                    <div class="col-auto pe-1">
+                                    <div class="col-auto pe-1" data-bs-toggle="tooltip" title="Number of slot(s) available">
                                         <p style="font-size: 12px; margin-bottom: 0;"><i class='bi bi-people-fill'></i> <?= $row['applicantSize'] ?></p>
                                     </div>
-                                    <div class="col-auto pe-1">
-                                        <p style="font-size: 12px; margin-bottom: 0;"><i class='bi bi-clock'></i> <?= ($row['employmentType']) ?></p>
+                                    <div class="col-auto pe-1" data-bs-toggle="tooltip" title="Type of Employment">
+                                        <p style=" font-size: 12px; margin-bottom: 0; "><i class='bi bi-clock'></i> <?= ($row['employmentType']) ?></p>
                                     </div>
                                 </div>
-                                <div class="row ms-1">
+                                <div class=" row ms-1">
                                     <p class='card-text mb-1' style="font-size: 15px;"> PHP <?= ($row['minimumSalary']) ?> - <?= ($row['maximumSalary']) ?></p>
                                     <p class='card-text mb-1' style="font-size: 15px;"></i> <?= ($row['country']) ?>, <?= ($row['region']) ?>, <?= ($row['province']) ?>, <?= ($row['city']) ?></p>
                                     <p class='card-text mb-1' style="font-size: 15px;">
@@ -383,7 +358,7 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
         <!-- Second Column: Full Job Details -->
         <div class="col-md-7 mt-0" style="display: none;" id="job-details-container"> <!-- Initially hidden -->
             <div class="border rounded p-4 shadow">
-                <h3>Select a job to view details</h3>
+                <h3>Select a job to view details</h3> <!-- Default message -->
             </div>
         </div>
         <script>
@@ -506,37 +481,29 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
                         const benefitsHtml = benefitsArray.map(benefit => `<li>${benefit.trim()}</li>`).join('');
 
                         const jobDetailsHtml = `
-            <div class="card mt-2 mx-2 text-light" style="flex: 1; padding:20px;" id="card">
-                <h2 class="mb-2 fw-bold">${jobPost.jobTitle}</h2>
-                <div class="row text-start ms-1">
-                    <div class="col-auto pe-1">
-                        <p style="font-size: 13px; margin-bottom: 0;"><i class='bi bi-people-fill'></i> ${applicantSize}</p>
+             <div id="jobDetails" style="flex: 1; padding:50px;">
+                <div id="jobHeader" class="header sticky-top bg-white p-4 mt-0" style="z-index: 1000; position: sticky; top: 0; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                    <h2 style="margin-bottom: 1px;">${jobPost.jobTitle}</h2>
+                    <div class="row text-start ms-1">
+                        <div class="col-auto pe-1">
+                            <p style="font-size: 12px; margin-bottom: 0;" data-bs-toggle="tooltip" title="Number of slot(s) available"><i class='bi bi-people-fill'></i> ${applicantSize}</p>
+                        </div>
+                        <div class="col-auto pe-1">
+                            <p style="font-size: 12px; margin-bottom: 0;" data-bs-toggle="tooltip" title="Type of Employment"><i class='bi bi-clock' ></i> ${employmentType}</p>
+                        </div>
                     </div>
-                    <div class="col-auto pe-1">
-                        <p style="font-size: 13px; margin-bottom: 0;"><i class='bi bi-clock'></i> ${employmentType}</p>
-                    </div>
-                </div>
-                <br>
-                <div class="row ms-1 mb-2">
-                    <p class='card-text mb-1' style="font-size: 16px;">PHP ${jobPost.minimumSalary} - ${jobPost.maximumSalary}</p>
-                    <p class='card-text mb-1' style="font-size: 16px;">${jobPost.country}, ${jobPost.region}, ${jobPost.province}, ${jobPost.city}</p>
-                </div>
-                <div class="row mb-4 ms-1">
-                    <p class='card-text' style="font-size: 16px;">Posted : ${postedTimeAgo}</p>
-                </div>
-                <div>
-                <button type='button' class='btn btn-md text-white mb-3 px-5 py-2' style='background-color: #003c3c;'
-                    onclick="window.location.href='./View/JobApplication.php?job_id=${jobPostId}'">
-                    Apply
-                </button>
+                    <button id="applyButton" class="btn btn-md text-white px-5 py-2"
+                        style="background-color: #003c3c; position: absolute; right: 10px; top: 30px; transition: all 0.3s;"  onclick="window.location.href='./View/JobApplication.php?job_id=${jobPostId}'">
+                        Apply
+                    </button>
                 </div>
 
-                <p class="my-2 "><strong>Benefits:</strong></p>
+                      <p class="mt-3 "><strong>Benefits:</strong></p>
                 <ul class='card-text mb-2' style="font-size: 16px;">
                     ${benefitsHtml}
-                </ul>87
+                </ul>
                 
-                <p><strong class="">Description: </strong>${jobDescription}</p>
+                <p><strong>Description:</strong> ${jobDescription}</p>
                 <p><strong>Qualification:</strong> ${jobQualification}</p>
                 <p><strong>Key Responsibilities:</strong> ${jobKeyResponsibilities}</p>
             </div>
@@ -562,11 +529,12 @@ $jobPosts = $jobPostController->handleSearchAndFilters($search, $filter_time, $f
                 window.location.href = url.href; // Navigate to the reset URL
             }
         </script>
-    </div>
+        <script src="../../Assets/Js/tooltip.js" defer></script>
+
 
 </body>
 <!--Footer-->
-<div class="container-fluid bg-dark text-center text-light mt-2" style="padding: 10px 0;">
+<div class="container-fluid bg-dark text-center text-light mt-5" style="padding: 10px 0;">
     <div class="footer-content" style="min-height: 100px; line-height: 30px;">
         <p class="mb-2">&copy; 2024 Your Organization. All Rights Reserved.</p>
 

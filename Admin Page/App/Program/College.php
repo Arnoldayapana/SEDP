@@ -10,6 +10,19 @@ include('../../Core/Includes/header.php');
 $name = $email = $school = $contact = $GradeLevel = "";
 $errorMessage = $successMessage = "";
 
+$status = $_GET['applicant_status'] ?? '';
+
+// Pagination logic
+$limit = 7; // Number of results per page
+$pageNum = isset($_GET['page']) ? $_GET['page'] : 1;
+$offset = ($pageNum - 1) * $limit;
+
+// Fetch total number of applicants
+$totalCountSql = "SELECT COUNT(*) as total FROM recipient WHERE GradeLevel = 'College' ";
+$totalResult = $connection->query($totalCountSql);
+$totalRow = $totalResult->fetch_assoc();
+$totalApplicants = $totalRow['total'];
+$totalPages = ceil($totalApplicants / $limit);
 ?>
 
 <div class="wrapper">
@@ -21,13 +34,13 @@ $errorMessage = $successMessage = "";
         <!-- Header -->
         <?php include '../../core/includes/navBar.php'; ?>
 
-        <div class="container-fluid shadow p-3 mb-5 bg-body-tertiary rounded-4 my-4">
+        <div class="container-fluid shadow p-3 bg-body-tertiary rounded-3">
             <!-- Alert Messages -->
             <?php include('../../Core/Includes/alertMessages.php'); ?>
             <h3 class="fw-bold fs-5">List Of College Recipients</h3>
             <hr>
             <div class="row">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end px-6">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end ">
                     <form action="../Scholar/SearchRecipient.php" method="GET">
                         <div class="input-group mb-2">
                             <input type="text" name="search" class="form-control" placeholder="Search Recipient">
@@ -53,7 +66,7 @@ $errorMessage = $successMessage = "";
                 <tbody>
                     <?php
                     // Read all rows from the database table
-                    $sql = "SELECT * FROM recipient WHERE GradeLevel = 'College'";
+                    $sql = "SELECT * FROM recipient WHERE GradeLevel = 'College' LIMIT $limit OFFSET $offset";
                     $result = $connection->query($sql);
 
                     if (!$result) {
@@ -70,7 +83,7 @@ $errorMessage = $successMessage = "";
                             <td>{$row['name']}</td>
                             <td>{$row['email']}</td>
                             <td>
-                                <a href='viewCollegeRecipient.php?id=$row[recipient_id]'
+                                    <a href='viewCollegeRecipient.php?id=$row[recipient_id]'
                                         class='btn btn-warning btn-sm'>
                                         <i class='bi bi-eye'></i>
                                     </a>
@@ -111,7 +124,7 @@ $errorMessage = $successMessage = "";
                                                                 <option value='' disabled>Select a branch</option>";
 
                         // Fetch branchess from the database
-                        $sql_dept = "SELECT * FROM branches ORDER BY name ASC";
+                        $sql_dept = "SELECT * FROM tblbranch  ORDER BY name ASC";
                         $result_dept = $connection->query($sql_dept);
 
                         if ($result_dept) {
@@ -170,6 +183,49 @@ $errorMessage = $successMessage = "";
                     ?>
                 </tbody>
             </table>
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <!-- First Page Button -->
+                        <li class="page-item <?= ($pageNum <= 1) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=1&search=<?= htmlspecialchars($searchTerm); ?>&applicant_status=<?= htmlspecialchars($status); ?>" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+
+                        <!-- Previous Page Button -->
+                        <li class="page-item <?= ($pageNum <= 1) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $pageNum - 1; ?>&search=<?= htmlspecialchars($searchTerm); ?>&applicant_status=<?= htmlspecialchars($status); ?>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <li class="page-item <?= ($i === $pageNum) ? 'active' : ''; ?>">
+                                <a class="page-link" href="?page=<?= $i; ?>&search=<?= htmlspecialchars($searchTerm); ?>&applicant_status=<?= htmlspecialchars($status); ?>">
+                                    <?= $i; ?>
+                                </a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <!-- Next Page Button -->
+                        <li class="page-item <?= ($pageNum >= $totalPages) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $pageNum + 1; ?>&search=<?= htmlspecialchars($searchTerm); ?>&applicant_status=<?= htmlspecialchars($status); ?>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+
+                        <!-- Last Page Button -->
+                        <li class="page-item <?= ($pageNum >= $totalPages) ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $totalPages; ?>&search=<?= htmlspecialchars($searchTerm); ?>&applicant_status=<?= htmlspecialchars($status); ?>" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </main>
 </div>

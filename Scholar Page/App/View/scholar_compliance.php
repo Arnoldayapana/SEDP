@@ -6,7 +6,7 @@ include('../../Core/Includes/header.php');
 <div class="main-container p-4">
 
     <div class="container" style="margin-top: 4rem;">
-            <div class="row g-4">
+        <div class="row g-4">
             <!-- Card 1 -->
             <div class="col-md-6">
                 <div class="compliance-card p-5 shadow-sm bg-white rounded position-relative" style="transition: transform 0.3s ease, box-shadow 0.3s ease; border-left: 6px solid #00bfa5; background: #f8f9fa; border-radius: 15px;">

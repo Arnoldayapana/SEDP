@@ -2,7 +2,7 @@
 include 'database.php';  // Ensure this path is correct
 
 $pdo = $database->connect();  // Use the $database variable to get the PDO instance
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); //
 
 session_start();
 

@@ -8,6 +8,7 @@ $email = "";
 $contact = "";
 $message = "";
 $school = "";
+$application_status = "";
 
 // Check if the form is submitted via POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -17,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $contact = $_POST['contact'];
     $message = $_POST['message'];
     $school = $_POST['school'];
+    $application_status = $_POST['application_status'];
 
     // File upload validation
     $resume = $_FILES['resume'];
@@ -68,14 +70,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             error_log("File Name: " . $fileName);
 
             // Prepare SQL query with prepared statements to avoid SQL injection
-            $stmt = $connection->prepare("INSERT INTO scholar_applicant (name, email, contact, message, school, resume) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt = $connection->prepare("INSERT INTO scholar_applicant (name, email, contact, message, school, resume, application_status) VALUES (?, ?, ?, ?, ?, ?,?)");
             if (!$stmt) {
                 error_log("Statement preparation failed: " . $connection->error);
                 exit;
             }
 
             // Bind parameters
-            $stmt->bind_param("ssssss", $name, $email, $contact, $message, $school, $fileName);
+            $stmt->bind_param("sssssss", $name, $email, $contact, $message, $school, $fileName, $application_status);
 
             // Execute the query
             if ($stmt->execute()) {
@@ -85,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $contact = "";
                 $message = "";
                 $school = "";
+                $application_status = "";
 
                 // Redirect after successful form submission
                 header("Location: ../Module/ApplicationStatus.php?msg=Application Submitted Successfully");

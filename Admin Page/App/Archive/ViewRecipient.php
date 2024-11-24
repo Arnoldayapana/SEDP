@@ -5,13 +5,13 @@ $page = 'Scholar';
 include("../../../Database/db.php");
 include('../../Core/Includes/header.php');
 
-// Get the recipient_id from the URL
-$recipient_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+// Get the re_archive_id from the URL
+$re_archive_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
 // Fetch recipient data
-$sql = "SELECT * FROM recipient_archive WHERE recipient_id = ?";
+$sql = "SELECT * FROM recipient_archive WHERE re_archive_id = ?";
 $stmt = $connection->prepare($sql);
-$stmt->bind_param("i", $recipient_id);
+$stmt->bind_param("i", $re_archive_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $recipient = $result->fetch_assoc();
