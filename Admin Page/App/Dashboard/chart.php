@@ -2,15 +2,15 @@
 include('../../../Database/db.php');
 
 // Fetch employee names and active days
-$sql = "SELECT username, DATEDIFF(CURDATE(), hire_date) AS active_days FROM employees";
+$sql = "SELECT name, DATEDIFF(CURDATE(), hire_date) AS active_days FROM employees";
 $result = $connection->query($sql);
 
-$username = [];
+$name = [];
 $active_days = [];
 
 // Loop through the result and store the data in arrays
 while ($row = $result->fetch_assoc()) {
-    $username[] = $row['username'];
+    $name[] = $row['name'];
     $active_days[] = $row['active_days'];
 }
 
@@ -19,7 +19,7 @@ $connection->close();
 
 <!-- Pass PHP data to JavaScript -->
 <script>
-    const employeeNames = <?php echo json_encode($username); ?>;
+    const employeeNames = <?php echo json_encode($name); ?>;
     const activeDays = <?php echo json_encode($active_days); ?>;
 </script>
 
