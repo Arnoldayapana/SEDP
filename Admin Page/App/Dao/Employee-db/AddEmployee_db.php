@@ -3,7 +3,7 @@
 include("../../../../Database/db.php");
 
 // Initialize variables to avoid "root" issue in input field
-$username = "";
+$name = "";
 $email = "";
 $ContactNumber = "";
 $department = "";
@@ -13,7 +13,7 @@ $confirm_password = "";
 $usertype = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
+    $name = $_POST['name'];
     $email = $_POST['email'];
     $ContactNumber = $_POST['ContactNumber'];
     $department = $_POST['department'];
@@ -29,18 +29,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     } else {
         // Validation of form fields
-        if (empty($username) || empty($email) || empty($ContactNumber) || empty($department) || empty($branch) || empty($password) || empty($confirm_password)) {
+        if (empty($name) || empty($email) || empty($ContactNumber) || empty($department) || empty($branch) || empty($password) || empty($confirm_password)) {
         } elseif ($password != $confirm_password) {
             header("Location: ../../View/Employee.php?error_msg=Passwords do not match. Please ensure both password fields are identical.");
             exit;
         } else {
             // Prepare SQL query with prepared statements to avoid SQL injection
-            $stmt = $connection->prepare("INSERT INTO employees (username, email, ContactNumber, department, branch, password,usertype) VALUES (?, ?, ?, ?, ?,?,?)");
-            $stmt->bind_param("sssssss", $username, $email, $ContactNumber, $department, $branch, $password, $usertype);
+            $stmt = $connection->prepare("INSERT INTO employees (name, email, ContactNumber, department, branch, password,usertype) VALUES (?, ?, ?, ?, ?,?,?)");
+            $stmt->bind_param("sssssss", $name, $email, $ContactNumber, $department, $branch, $password, $usertype);
 
             if ($stmt->execute()) {
                 // Reset form values after successful submission
-                $username = "";
+                $name = "";
                 $email = "";
                 $ContactNumber = "";
                 $department = "";

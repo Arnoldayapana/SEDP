@@ -3,6 +3,21 @@ $title = 'Load Expenses | SEDP HRMS';
 $page = 'compliance Load Expenses';
 
 include('../../Core/Includes/header.php');
+include("../../../Database/db.php");
+$recipient_id = isset($_GET['id']);
+
+// Pagination logic
+$limit = 7; // Number of results per page
+$pageNum = isset($_GET['page']) ? $_GET['page'] : 1;
+$offset = ($pageNum - 1) * $limit;
+
+// Fetch total number of applicants
+$totalCountSql = "SELECT COUNT(*) as total FROM recipient";
+$totalResult = $connection->query($totalCountSql);
+$totalRow = $totalResult->fetch_assoc();
+$totalApplicants = $totalRow['total'];
+$totalPages = ceil($totalApplicants / $limit);
+$counter = ($pageNum - 1) * $limit + 1;
 ?>
 <div class="wrapper">
     <?php
@@ -18,16 +33,26 @@ include('../../Core/Includes/header.php');
             <h3 class="fw-bold fs-4">Load Expenses</h3>
             <hr>
             <div class="row">
-                <div class="d-grid d-md-flex justify-content-md-end px-6">
-                    <form action="#" method="GET">
-                        <div class="input-group">
-                            <input type="text" name="search" value="" class="form-control" placeholder="Search Recipient">
-                            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
-                        </div>
-                    </form>
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- Button aligned to the start -->
+                    <div>
+                        <a href="../View/Compliance.php" class="btn text-white" style="background-color: #003c3c;">
+                            <i class="bi bi-list"></i>
+                        </a>
+                    </div>
+
+                    <!-- Search form aligned to the end -->
+                    <div>
+                        <form action="#" method="GET" class="d-flex">
+                            <input type="text" name="search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
+                                class="form-control me-2" placeholder="Search Recipient">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <br>
             <table class="table table-striped">
                 <thead class="table-primary">
                     <tr>
@@ -43,28 +68,30 @@ include('../../Core/Includes/header.php');
                     // Connection
                     include("../../../Database/db.php");
 
-                    // Read all rows from the database table
+                    // Search query logic
+                    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+                    $searchCondition = $search ? "AND (r.name LIKE '%$search%' OR r.email LIKE '%$search%')" : '';
+
+                    // SQL query
                     $sql = "SELECT 
-                        r.recipient_id AS recipient_id,
-                        r.name AS recipient_name,
-                        r.email AS recipient_email,
-                        r.school AS recipient_school,
-                        r.contact AS recipient_contact,
-                        r.branch AS recipient_branch,
-                        r.GradeLevel AS recipient_GradeLevel,
-                        sle.id AS sle_id,
-                        sle.report_title AS report_title,
-                        sle.report_content AS report_content,
-                        sle.report_status AS report_status,
-                        sle.report_month AS report_month,
-                        sle.file AS narrative_report, 
-                        sle.submission_date  
+                        r.recipient_id,
+                        r.name,
+                        r.email,
+                        snr.report_title,
+                        snr.report_status
                     FROM 
                         recipient r
                     JOIN 
-                        scholar_load_expenses sle
+                        scholar_load_expenses snr
                     ON 
-                        r.recipient_id = sle.id;";
+                        r.recipient_id = snr.recipient_id
+                    WHERE 
+                        snr.submission_date = (
+                            SELECT MAX(submission_date)
+                            FROM scholar_load_expenses snr_inner
+                            WHERE snr_inner.recipient_id = r.recipient_id
+                        )
+                    $searchCondition";
 
                     // Execute the query
                     $result = $connection->query($sql);
@@ -91,21 +118,25 @@ include('../../Core/Includes/header.php');
 
                         echo "
                         <tr>
-                            <td>{$row['recipient_id']}</td>
-                            <td>{$row['recipient_name']}</td>
-                            <td>{$row['recipient_email']}</td>
+                            <td>" . $counter++ . "</td>
+                            <td>{$row['name']}</td>
+                            <td>{$row['email']}</td>
                             <td>{$statusBadge}</td>
                             <td>
                                 <!-- View Button -->
                                 <a href='../LoadExpenses/ViewLoadExpenses.php?id={$row['recipient_id']}' class='btn btn-warning btn-sm'>
                                     <i class='bi bi-eye'></i>
-                                </a>    
+                                </a>   
                             </td>
                         </tr>";
                     }
                     ?>
                 </tbody>
             </table>
+            <!-- Pagination -->
+            <?php
+            include('../../Core/Includes/Pagination.php');
+            ?>
 
         </div>
 

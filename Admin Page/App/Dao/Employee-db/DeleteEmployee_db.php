@@ -7,8 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Step 1: Archive the employee data
         // Insert the employee data into the employee_archive table before deleting from employees
-        $archive_sql = "INSERT INTO employee_archive (employee_id, username, branch, department, email, ContactNumber, hire_date, archived_at)
-                        SELECT employee_id, username, branch, department, email, ContactNumber, hire_date, NOW()
+        $archive_sql = "INSERT INTO employee_archive (employee_id, name, branch, department, email, ContactNumber, hire_date, archived_at)
+                        SELECT employee_id, name, branch, department, email, ContactNumber, hire_date, NOW()
                         FROM employees
                         WHERE employee_id = ?";
         $archive_stmt = $connection->prepare($archive_sql);

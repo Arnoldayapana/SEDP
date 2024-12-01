@@ -1,8 +1,23 @@
 <?php
-$title = 'Narrative Report | SEDP HRMS';
-$page = 'compliance narrative report';
+$title = 'Thesis Expenses | SEDP HRMS';
+$page = 'Complieances';
 
 include('../../Core/Includes/header.php');
+include("../../../Database/db.php");
+$recipient_id = isset($_GET['id']);
+
+// Pagination logic
+$limit = 7; // Number of results per page
+$pageNum = isset($_GET['page']) ? $_GET['page'] : 1;
+$offset = ($pageNum - 1) * $limit;
+
+// Fetch total number of applicants
+$totalCountSql = "SELECT COUNT(*) as total FROM recipient";
+$totalResult = $connection->query($totalCountSql);
+$totalRow = $totalResult->fetch_assoc();
+$totalApplicants = $totalRow['total'];
+$totalPages = ceil($totalApplicants / $limit);
+$counter = ($pageNum - 1) * $limit + 1;
 ?>
 <div class="wrapper">
     <?php
@@ -14,72 +29,118 @@ include('../../Core/Includes/header.php');
         include('../../Core/Includes/navBar.php');
         ?>
 
-        <div class="container-fluid shadow p-3 mb-5 bg-body-tertiary rounded-4">
-            <h3 class="fw-bold fs-4">Book Report</h3>
-            <hr style="padding-bottom: 1.5rem;">
+        <div class="container-fluid shadow p-3 mb-2 bg-body-tertiary rounded-2">
+            <h3 class="fw-bold fs-4">Thesis Expenses</h3>
+            <hr>
             <div class="row">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end px-6">
-                    <form action="#" method="GET">
-                        <div class="input-group mb-2">
-                            <input type="text" name="search" value="" class="form-control" placeholder="Search Recipient">
-                            <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i></button>
-                        </div>
-                    </form>
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- Button aligned to the start -->
+                    <div>
+                        <a href="../View/Compliance.php" class="btn text-white" style="background-color: #003c3c;">
+                            <i class="bi bi-list"></i>
+                        </a>
+                    </div>
+
+                    <!-- Search form aligned to the end -->
+                    <div>
+                        <form action="#" method="GET" class="d-flex">
+                            <input type="text" name="search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
+                                class="form-control me-2" placeholder="Search Recipient">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <br>
-            <table class="table table-striped">
+            <table class="table table-striped mt-0">
                 <thead class="table-primary">
                     <tr>
                         <th>ID</th>
                         <th>NAME</th>
                         <th>EMAIL</th>
-                        <th>SUBMISION STATUS</th>
+                        <th>SUBMISSION STATUS</th>
                         <th>OPERATIONS</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    //connection
+                    // Connection
                     include("../../../Database/db.php");
-                    //read all row from database table
-                    $sql = "SELECT * FROM recipient";
+
+                    // Search query logic
+                    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+                    $searchCondition = $search ? "AND (r.name LIKE '%$search%' OR r.email LIKE '%$search%')" : '';
+
+                    // SQL query
+                    $sql = "SELECT 
+                        r.recipient_id,
+                        r.name,
+                        r.email,
+                        snr.report_title,
+                        snr.report_status
+                    FROM 
+                        recipient r
+                    JOIN 
+                        scholar_thesis_expenses snr
+                    ON 
+                        r.recipient_id = snr.recipient_id
+                    WHERE 
+                        snr.submission_date = (
+                            SELECT MAX(submission_date)
+                            FROM scholar_thesis_expenses snr_inner
+                            WHERE snr_inner.recipient_id = r.recipient_id
+                        )
+                    $searchCondition";
+
+                    // Execute the query
                     $result = $connection->query($sql);
 
+                    // Check if the query is valid
                     if (!$result) {
-                        die("Invalid Query" . $connection->error);
+                        die("Invalid Query: " . $connection->error);
                     }
-                    //read data of each row
+
+                    // Read data from each row
                     while ($row = $result->fetch_assoc()) {
-                        $modalId = "editRecipient" . $row['recipient_id'];
-                        $ViewId = "viewRecipient" . $row['recipient_id'];
+                        $statusBadge = '';
+                        if ($row['report_status'] === 'Pending') {
+                            $statusBadge = "<span class='badge bg-warning text-dark'>{$row['report_status']}</span>";
+                        } elseif ($row['report_status'] === 'Submitted') {
+                            $statusBadge = "<span class='badge bg-primary'>{$row['report_status']}</span>";
+                        } else {
+                            $statusBadge = "<span class='badge bg-secondary'>{$row['report_status']}</span>";
+                        }
+
                         echo "
                         <tr>
-                            <td>$row[recipient_id]</td>
-                            <td>$row[name]</td>
-                            <td>$row[email]</td>
-                            <td class='text-warning fw-semi-bold fs-6'>pending</td>
+                            <td>" . $counter++ . "</td>
+                            <td>{$row['name']}</td>
+                            <td>{$row['email']}</td>
+                            <td>{$statusBadge}</td>
                             <td>
-                                    <!-- Check Button -->
-                                    <button type='button' class='btn btn-success btn-sm' data-bs-toggle='modal' data-bs-target='#$modalId'>
-                                        <i class='bi bi-check-circle'></i>
-                                    </button>
-                                    <!-- Reject Button -->
-                                    <button type='button' class='btn btn-danger btn-sm' data-bs-toggle='modal' data-bs-target='#$modalId'>
-                                        <i class='bi bi-file-excel'></i>
-                                    </button>
+                                <!-- View Button -->
+                                <a href='../Expenses/expenses.php?id={$row['recipient_id']}' class='btn btn-warning btn-sm'>
+                                    <i class='bi bi-eye'></i>
+                                </a> 
                             </td>
                         </tr>";
                     }
                     ?>
                 </tbody>
             </table>
-
+            <!-- Pagination -->
+            <?php
+            include('../../Core/Includes/Pagination.php');
+            ?>
         </div>
 
         <?php
-        include('../../../Assets/Js/bootstrap.js')
+        include('../../../Assets/Js/bootstrap.js');
         ?>
-        </body>
+    </div>
+</div>
 
-        </html>
+</body>
+
+</html>

@@ -1,7 +1,31 @@
 <?php
 include('Database/login.php');
 ?>
+<style>
+    .swal2-popup {
+        background-color: #003c3c !important;
+        color: #fff !important;
+    }
 
+    .swal2-title,
+    .swal2-html-container,
+    .swal2-confirm {
+        color: #fff !important;
+    }
+
+    .swal2-confirm {
+        background-color: #003c3c !important;
+    }
+
+    .swal2-popup .swal2-success-line,
+    .swal2-popup .swal2-error-line {
+        background-color: #003c3c !important;
+    }
+
+    .swal2-popup .swal2-icon.swal2-success .swal2-success-ring {
+        border-color: #fff !important;
+    }
+</style>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +40,7 @@ include('Database/login.php');
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-
+    <link rel="shortcut icon" href="Assets/Images/SEDPFavicon.png" type="image/x-icon">
     <!-- Custom CSS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,176 +48,21 @@ include('Database/login.php');
         rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="Assets/Css/sweetAlert.css">
     <link rel="stylesheet" href="Assets/Css/index.css">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+    <link rel="stylesheet" href="Assets/Css/loginStyle.css">
+    <link rel="stylesheet" href="Assets/Css/inputLabel.css">
 
-        /* Set the navbar to be fixed at the top */
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
 
-        /* Carousel takes up the full viewport height minus the navbar */
-        .carousel-container {
-            position: relative;
-            /* Keep carousel beneath the login form */
-            z-index: 1;
-            /* Lower z-index to ensure login form is above it */
-        }
-
-        /* Adjustments to maintain carousel's smooth transitions */
-        .carousel-item {
-            height: 100vh;
-        }
-
-        /* Ensure images fill the entire carousel space */
-        .carousel-inner img {
-            width: 100%;
-            height: 100vh;
-            object-fit: cover;
-            filter: brightness(0.5);
-            /* Ensure the image covers the container without distortion */
-        }
-
-        /* Remove padding/margin */
-        .carousel-inner,
-        .carousel-item {
-            padding: 0;
-            margin: 0;
-        }
-
-        /* Center the login form */
-        .login-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 440px;
-            height: 500px;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            z-index: 10;
-            /* Ensure it stays on top of the carousel */
-        }
-
-        #logo {
-            width: 80px;
-            height: 80px;
-        }
-
-        .login-header {
-            margin: 16px;
-        }
-
-        .H-side h2 {
-            margin: 0;
-            text-align: start;
-            font-size: 28px;
-            font-weight: bold;
-            padding-left: 15px;
-        }
-
-        .H-side p {
-            margin: 0;
-            font-size: 16px;
-            color: gray;
-            padding-left: 15px;
-        }
-
-        .form-group input {
-            background-color: #eafaf1;
-            border: 1px solid #ccc;
-            font-size: 16px;
-        }
-
-        .form-group i {
-            color: #aaa;
-        }
-
-        .btn {
-            background-color: #275144;
-            font-size: 18px;
-            border: none;
-        }
-
-        .btn:hover {
-            background-color: #204938;
-        }
-
-        .form-text a {
-            color: #7e7e7e;
-            text-decoration: none;
-        }
-
-        .form-text a:hover {
-            text-decoration: underline;
-        }
-
-        .login-form-container {
-            margin: 10px;
-        }
-
-        .login-form-container label {
-            font-size: 14px;
-            text-align: left;
-            display: block;
-            margin-left: 0;
-        }
-
-        /* Icon styling */
-        .input-group-text {
-            cursor: pointer;
-        }
-
-        .carousel-control-prev,
-        .carousel-control-next {
-            background: none !important;
-            /* Remove background */
-            border: none !important;
-            /* Remove border */
-        }
-
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            filter: invert(1);
-            /* Change icon color to white */
-        }
-
-        .carousel-indicators {
-            margin-top: 30px;
-            margin-bottom: 20px;
-        }
-
-        .navbar-nav .nav-link {
-            transition: background-color 0.3s ease, color 0.3s ease;
-            padding: 10px 10px;
-            color: #ffffff;
-            margin-left: 20px;
-        }
-
-        .navbar-nav .nav-link:hover {
-            background-color: #004f4f;
-            color: #ffffff;
-            border-radius: 6px;
-        }
-    </style>
 </head>
 
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #003c3c;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-opacity-75" style="background: linear-gradient(135deg, #001f1f, #003c3c, #004d4d);">
         <div class="container-fluid">
+            <a class="navbar-brand text-white align-text-center fw-bolder fs-5" href="https://sedp.ph/" target="_blank">
+                SEDP Simbag Sa Pag-Asenso Inc.
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02"
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -221,14 +90,15 @@ include('Database/login.php');
             </div>
         </div>
     </nav>
+
     <!-- Image Slider -->
     <div class="carousel-container">
         <div id="carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                <button type="button" data-bs-target="#carousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                <button type="button" style="display: none;" data-bs-target="#carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" style="display: none;" data-bs-target="#carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" style="display: none;" data-bs-target="#carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" style="display: none;" data-bs-target="#carousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active" data-bs-interval="4000">
@@ -265,97 +135,13 @@ include('Database/login.php');
         </div>
     </div>
 
-    <!-- Login Form inside the carousel -->
-    <div class="login-container text-center ">
-        <div class="login-header d-flex mb-4 align-items-center">
-            <img src="Include/image/loginLogo.png" alt="SEDP Logo" id="logo">
-            <div class="H-side">
-                <h2 class="fw-bold">SEDP</h2>
-                <p>Simbag sa Pag-Asenso Inc.</p>
-            </div>
-        </div>
-        <hr class="border border-dark border-2 opacity-50">
+    <?php
+    include_once(__DIR__ . '/Assets/Php/login.php');
+    ?>
 
-        <div class="login-form-container mt-4">
-            <!-- Email Input Field -->
-            <form action="Database/login.php" method="POST">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" name="username"
-                        id="username" placeholder="eg@email.com" required>
-                </div>
-
-                <!-- Password Input Field -->
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" name="password"
-                            id="password" placeholder="********" required>
-                        <span class="input-group-text" id="toggle-password"
-                            onclick="togglePasswordVisibility()"><i class="fas fa-eye"></i></span>
-                    </div>
-                </div>
-                <div class="text-right mb-3" style="font-size:12px">
-                    <a href="#" class="forgot-password">Forgot Password?</a>
-                </div>
-
-                <!-- Submit Button -->
-                <button type="submit" class="btn btn-block rounded-pill text-white p-2"
-                    style="background-color: #003c3c;">Login</button>
-            </form>
-        </div>
-    </div>
-
-
-    <?php if (isset($_SESSION['login_success'])): ?>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Login Successful',
-                    text: '<?php echo addslashes($_SESSION['login_success']); ?>',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(function() {
-                    window.location.href = '<?php echo $_SESSION['redirect_to']; ?>';
-                });
-            });
-        </script>
-        <?php
-        unset($_SESSION['login_success']);
-        unset($_SESSION['redirect_to']);
-        ?>
-    <?php elseif (isset($_SESSION['login_error'])): ?>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Login Failed',
-                    text: '<?php echo addslashes($_SESSION['login_error']); ?>',
-                    showConfirmButton: true,
-                    confirmButtonText: 'OK'
-                });
-            });
-        </script>
-        <?php unset($_SESSION['login_error']); ?>
-    <?php endif; ?>
-
-    <script>
-        function togglePasswordVisibility() {
-            var passwordField = document.getElementById("password");
-            var icon = document.getElementById("toggle-password").firstElementChild;
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
-            } else {
-                passwordField.type = "password";
-                icon.classList.remove("fa-eye-slash");
-                icon.classList.add("fa-eye");
-            }
-        }
-    </script>
-
+    <?php include_once("Assets/Php/sweetAlert.php"); ?>
+    <script src="Assets/Js/login.js"></script>
+    <script src="Assets/Js/toggleEye.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 
 </body>

@@ -1,6 +1,6 @@
 <?php
 // Initialize variables to avoid undefined variable warnings
-$username = $email = $ContactNumber = $department = $branch = '';
+$name = $email = $ContactNumber = $department = $branch = '';
 
 ?>
 <div class="modal fade" id="AddEmployee" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -15,8 +15,8 @@ $username = $email = $ContactNumber = $department = $branch = '';
                 <div class="modal-body" style="max-height: 550px; overflow-y: auto;">
                     <input type="hidden" class="form-control" name="usertype" value="employee">
                     <div class="form-group mb-2">
-                        <label for="username" class="col col-form-label">Name</label>
-                        <input type="text" class="form-control" id="username" name="username" minlength="3" maxlength="50" value="<?php echo htmlspecialchars($username); ?>" required>
+                        <label for="name" class="col col-form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" minlength="3" maxlength="50" value="<?php echo htmlspecialchars($name); ?>" required>
                     </div>
                     <div class="form-group mb-2">
                         <label for="email" class="col col-form-label">Email</label>

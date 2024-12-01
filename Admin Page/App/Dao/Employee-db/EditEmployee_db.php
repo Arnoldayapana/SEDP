@@ -4,7 +4,7 @@ include("../../../../Database/db.php");
 
 // Initialize variables
 $employee_id = "";
-$username = "";
+$name = "";
 $email = "";
 $department = "";
 $branch = "";
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
 
     // Assign the employee data to variables
-    $username = $row["username"];
+    $name = $row["name"];
     $email = $row["email"];
     $department = $row["department"];
     $branch = $row["branch"];
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 // Handle POST request to update employee data
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $employee_id = $_POST['employee_id'];
-    $username = $_POST['username'];
+    $name = $_POST['name'];
     $email = $_POST['email'];
     $department = $_POST['department'];
     $branch = $_POST['branch'];
@@ -53,15 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     // Check for empty required fields
-    if (empty($employee_id) || empty($username) || empty($email) || empty($department) || empty($branch) || empty($ContactNumber) || empty($password)) {
+    if (empty($employee_id) || empty($name) || empty($email) || empty($department) || empty($branch) || empty($ContactNumber) || empty($password)) {
         $errorMessage = "All fields are required. Please fill out the form completely.";
         header("Location: ../../View/Employee.php?error_msg=$errorMessage");
         exit;
     }
 
     // SQL query to update employee data
-    $stmt = $connection->prepare("UPDATE employees SET username = ?, email = ?, department = ?, branch = ?, ContactNumber = ?, password = ? WHERE employee_id = ?");
-    $stmt->bind_param("ssssssi", $username, $email, $department, $branch, $ContactNumber, $password, $employee_id);
+    $stmt = $connection->prepare("UPDATE employees SET name = ?, email = ?, department = ?, branch = ?, ContactNumber = ?, password = ? WHERE employee_id = ?");
+    $stmt->bind_param("ssssssi", $name, $email, $department, $branch, $ContactNumber, $password, $employee_id);
 
     // Execute query and check for errors
     if ($stmt->execute()) {
